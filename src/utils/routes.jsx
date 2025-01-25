@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import AdminDashboard from "../pages/AdminDashboard/layout/AdminDashboard";
+<<<<<<< HEAD
 import Notification from "../pages/AdminDashboard/pages/Notification";
 import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
 import ControlsPage from "../pages/AdminDashboard/pages/ControlsPage";
@@ -13,12 +14,19 @@ import BalanceRecharge from "../pages/AdminDashboard/pages/BalanceRecharge";
 
 
 
+=======
+import NotificationPage from "../pages/AdminDashboard/pages/NotificationPage";
+import PricingPlansPage from "../pages/AdminDashboard/pages/PricingPlansPage";
+import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
+import ControlsPage from "../pages/AdminDashboard/pages/ControlsPage";
+>>>>>>> fathy
 
 
 export const router = createBrowserRouter([
   {
     path: "/", element: <AdminDashboard />, children: [
       { index: true, element: <ControlsPage /> },
+<<<<<<< HEAD
       {path:"BalanceRecharge",element:<BalanceRecharge/>},
       {path:"ChaletOwner",element:<ChaletOwner/>},
       { path: "Notification", element: <Notification/> },
@@ -31,6 +39,11 @@ export const router = createBrowserRouter([
 
       
 
+=======
+      { path: "Notification", element: <NotificationPage /> },
+      { path: "PricingPlans", element: <PricingPlansPage /> },
+      { path: "Support", element: <SupportPage /> },
+>>>>>>> fathy
     ]
   },
 ]);
