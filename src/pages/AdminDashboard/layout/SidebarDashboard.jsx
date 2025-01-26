@@ -39,7 +39,7 @@ export default function SidebarDashboard({ isOpen }) {
                 <div className="space-y-6 md:space-y-8">
                     <div>
                         <div
-                            className={`text-2xl flex items-center gap-2 cursor-pointer rounded ${isPartialMatch("/PricingPlans") ? "bg-[#0061E0] text-white py-2" : ""}`}
+                            className={`text-2xl flex items-center gap-2 cursor-pointer rounded ${isPartialMatch("/") ? "bg-[#0061E0] text-white py-2" : ""}`}
                             onClick={toggleDropdown}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
@@ -97,6 +97,8 @@ export default function SidebarDashboard({ isOpen }) {
       viewBox="0 0 512 512"
       width="1em"
       height="1em"
+      className={`text-[#0061E0] ${isExactMatch("/Supscriptions") ? "text-white" : ""}`}
+
    
     >
       <g fill="currentColor">
@@ -119,6 +121,7 @@ export default function SidebarDashboard({ isOpen }) {
       viewBox="0 0 14 14"
       width="1em"
       height="1em"
+      className={`text-[#0061E0] ${isExactMatch("/PricingPlans") ? "text-white" : ""}`}
      
     >
       <g
@@ -150,6 +153,8 @@ export default function SidebarDashboard({ isOpen }) {
       viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      className={`text-[#0061E0] ${isExactMatch("/Payments") ? "text-white" : ""}`}
+      
      
     >
       <path
@@ -173,6 +178,7 @@ export default function SidebarDashboard({ isOpen }) {
       viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      className={`text-[#0061E0] ${isExactMatch("/Notification") ? "text-white" : ""}`}
      
     >
       <path
@@ -198,6 +204,7 @@ export default function SidebarDashboard({ isOpen }) {
       viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      className={`text-[#0061E0] ${isExactMatch("/Support") ? "text-white" : ""}`}
     
     >
       <circle cx="9" cy="13" r="1" fill="currentColor"></circle>
