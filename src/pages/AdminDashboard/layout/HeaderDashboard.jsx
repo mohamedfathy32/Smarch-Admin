@@ -1,5 +1,5 @@
 import {  useState } from 'react';
-// import { IoIosMenu } from "react-icons/io";
+import { IoIosMenu } from "react-icons/io";
 import SidebarDashboard from './SidebarDashboard';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,10 +29,10 @@ export default function HeaderDashboard() {
             {/* Hamburger Icon only visible on small screens */}
             <div className='md:hidden'>
                 {/* Hamburger Icon (positioned to the right) */}
-                {/* <IoIosMenu
+                <IoIosMenu
                     onClick={toggleMenu}
                     className="text-4xl md:text-3xl transition-transform duration-300"
-                /> */}
+                />
 
             </div>
             <div className="flex items-center gap-4">
