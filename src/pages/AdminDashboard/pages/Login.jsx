@@ -37,7 +37,7 @@ function Login() {
        
 
         // التوجيه إلى صفحة أخرى بعد تسجيل الدخول
-        navigate("/dashboard");
+        navigate("/");
       } else {
         setError("بيانات تسجيل الدخول غير صحيحة");
       }
