@@ -10,27 +10,30 @@ import ReservationManagement from "../pages/AdminDashboard/pages/ReservationMana
 import ReservationRequester from "../pages/AdminDashboard/pages/ReservationRequester";
 import Supscriptions from "../pages/AdminDashboard/pages/Subscriptions";
 import BalanceRecharge from "../pages/AdminDashboard/pages/BalanceRecharge";
-
+import Login from "../pages/AdminDashboard/pages/Login";
 
 
 
 
 export const router = createBrowserRouter([
   {
-    path: "/", element: <AdminDashboard />, children: [
-      { index: true, element: <ControlsPage /> },
-      {path:"BalanceRecharge",element:<BalanceRecharge/>},
-      {path:"ChaletOwner",element:<ChaletOwner/>},
-      { path: "Notification", element: <Notification/> },
-      {path:"Payments" , element:<Payments/>},
-      { path: "PricingPlans", element: <PricePlans/> },
-      {path:"ReservationManagement",element:<ReservationManagement/>},
-      {path:"ReservationRequester", element:<ReservationRequester/>},
-      {path:"Supscriptions", element:<Supscriptions/>},
-      { path: "Support", element: <SupportPage/> },
-
-      
-
-    ]
+    path: "/", 
+    element: <Login /> // الصفحة الافتراضية هي Login
   },
+  {
+    path: "/dashboard", 
+    element: <AdminDashboard />, 
+    children: [
+      { index: true, element: <ControlsPage /> },
+      { path: "BalanceRecharge", element: <BalanceRecharge /> },
+      { path: "ChaletOwner", element: <ChaletOwner /> },
+      { path: "Notification", element: <Notification /> },
+      { path: "Payments", element: <Payments /> },
+      { path: "PricingPlans", element: <PricePlans /> },
+      { path: "ReservationManagement", element: <ReservationManagement /> },
+      { path: "ReservationRequester", element: <ReservationRequester /> },
+      { path: "Supscriptions", element: <Supscriptions /> },
+      { path: "Support", element: <SupportPage /> },
+    ]
+  }
 ]);
