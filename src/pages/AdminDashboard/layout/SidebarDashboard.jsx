@@ -223,7 +223,29 @@ export default function SidebarDashboard({ isOpen }) {
             </div>
 
 
+            <div
+                className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isExactMatch("/Articles") ? "bg-[#0061E0] text-white py-2" : ""}`}
+                onClick={() => nav("/Articles")}
+            >
+<svg 
+     viewBox="0 0 24 24"
+      width="1em"
+      height="1em"
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    stroke="currentColor" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+       className={`text-[#0061E0] ${isExactMatch("/Articles") ? "text-white" : ""}`}
+>
+    <path d="M4 4h16v16H4z"/>
+    <path d="M8 10h8M8 14h5M8 6h8"/>
+</svg>
+ 
 
+                <h1>مقاله جديدة </h1>
+            </div>
 
 
 
@@ -235,3 +257,21 @@ export default function SidebarDashboard({ isOpen }) {
         </aside>
     );
 }
+
+
+
+{/* <svg 
+     viewBox="0 0 24 24"
+      width="1em"
+      height="1em"
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    stroke="currentColor" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+       className={`text-[#0061E0] ${isExactMatch("/Articles") ? "text-white" : ""}`}
+>
+    <path d="M4 4h16v16H4z"/>
+    <path d="M8 10h8M8 14h5M8 6h8"/>
+</svg> */}

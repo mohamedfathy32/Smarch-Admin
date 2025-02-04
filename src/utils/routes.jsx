@@ -11,6 +11,7 @@ import ReservationRequester from "../pages/AdminDashboard/pages/ReservationReque
 import Supscriptions from "../pages/AdminDashboard/pages/Subscriptions"; // تعديل الاسم هنا
 import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
 import Login from "../pages/AdminDashboard/pages/Login";
+import Articles from "../pages/AdminDashboard/pages/Articles";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
       {path:"ReservationRequester", element:<ReservationRequester/>},
       {path:"Supscriptions", element:<Supscriptions/>},
       { path: "Support", element: <SupportPage/> },
+      {path:"Articles" , element:<Articles />}
     ]
   }
 ]);
