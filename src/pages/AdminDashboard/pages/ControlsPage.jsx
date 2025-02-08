@@ -1,16 +1,3 @@
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-import React from 'react'
->>>>>>> Stashed changes
-
-export default function ControlsPage() {
-  return (
-    <div>ControlsPage</div>
-  )
-<<<<<<< Updated upstream
-=======
-=======
 import axios from 'axios';
 import React, { useEffect, useState ,useMemo } from 'react';
 import { Bar, Doughnut } from "react-chartjs-2";
@@ -534,7 +521,5 @@ export default function ControlsPage() {
     )}
    </div>
   );
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
->>>>>>> Stashed changes
 }
 

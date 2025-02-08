@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-=======
 import React, { useEffect, useState } from 'react'
 
 import axios from 'axios';
@@ -9,7 +6,6 @@ import { GrView } from "react-icons/gr";
 import Swal from 'sweetalert2';
 import { Hourglass } from 'react-loader-spinner';
 
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
 
 export default function SupportPage() {
 

@@ -223,9 +223,6 @@ export default function SidebarDashboard({ isOpen }) {
             </div>
 
 
-<<<<<<< HEAD
-
-=======
             <div
                 className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isExactMatch("/Articles") ? "bg-[#0061E0] text-white py-2" : ""}`}
                 onClick={() => nav("/Articles")}
@@ -249,7 +246,6 @@ export default function SidebarDashboard({ isOpen }) {
 
                 <h1>مقاله جديدة </h1>
             </div>
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
 
 
 
