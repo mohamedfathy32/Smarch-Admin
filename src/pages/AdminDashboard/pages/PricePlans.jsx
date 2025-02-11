@@ -3,6 +3,16 @@ import axios from "axios";
 
 export default function PricePlans() {
     const [plans, setPlans] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editingPlan, setEditingPlan] = useState(null);
+    const [formData, setFormData] = useState({
+        name: "",
+        price: "",
+        maxChalets: "",
+        duration: "",
+        features: [],
+    });
+    const [errors, setErrors] = useState({});
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -10,7 +20,6 @@ export default function PricePlans() {
             console.error("No token found, redirecting to login.");
             return;
         }
-        console.log("Token:", token);
         fetchPlans();
     }, [token]);
 
@@ -28,41 +37,179 @@ export default function PricePlans() {
         }
     };
 
+    const openModal = (plan = null) => {
+        setEditingPlan(plan);
+        setFormData(
+            plan || {
+                name: "",
+                price: "",
+                maxChalets: "",
+                duration: "",
+                features: [],
+            }
+        );
+        setModalOpen(true);
+        setErrors({});
+    };
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.name) newErrors.name = "الاسم مطلوب";
+        if (!formData.price || isNaN(formData.price)) newErrors.price = "السعر يجب أن يكون رقمًا";
+        if (!formData.duration || isNaN(formData.duration)) newErrors.duration = "المدة يجب أن تكون رقمًا";
+        if (formData.features.length === 0) newErrors.features = "المزايا مطلوبة";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async () => {
+        if (!validate()) return;
+
+        try {
+            if (editingPlan) {
+                await axios.put(
+                    `https://smarch-back-end-nine.vercel.app/package/${editingPlan._id}`,
+                    formData,
+                    {
+                        headers: { Authorization: token },
+                    }
+                );
+            } else {
+                await axios.post("https://smarch-back-end-nine.vercel.app/package", formData, {
+                    headers: { Authorization: token },
+                });
+            }
+            setModalOpen(false);
+            fetchPlans();
+        } catch (error) {
+            console.error("Error saving plan:", error.response?.data || error.message);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await axios.delete(`https://smarch-back-end-nine.vercel.app/package/${editingPlan._id}`, {
+                headers: { Authorization: token },
+            });
+            fetchPlans();
+        } catch (error) {
+            console.error("Error deleting plan:", error.response?.data || error.message);
+        }
+    };
+
     return (
-        <div className="flex flex-col md:flex-row justify-center items-center gap-6 p-6">
-        {plans.map((plan) => (
-          <div
-            key={plan.id}
-            className="border border-gray-300 rounded-lg shadow-md p-6 text-center w-[90%] md:w-[25%] transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-          >
-            <h3 className="text-xl font-bold text-blue-700 mb-4">{plan.name}</h3>
-            <p className="text-lg font-semibold mb-4">{plan.price} ريال</p>
-            <ul className="text-sm text-gray-700 mb-6 space-y-2 min-h-40">
-              {plan.features.map((feature, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path opacity="0.1" d="M10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10C19.9936 4.47982 15.5202 0.00642897 10 0Z" fill="#0061E0" />
-                    <path d="M15.7725 6.83313L10.0684 14.574C9.93234 14.7545 9.72948 14.8727 9.50539 14.9022C9.2813 14.9316 9.05478 14.8698 8.87671 14.7306L4.80338 11.474C4.44393 11.1863 4.38573 10.6617 4.67338 10.3023C4.96102 9.94285 5.4856 9.88465 5.84504 10.1723L9.24171 12.8898L14.4309 5.8473C14.601 5.59195 14.8978 5.45078 15.2032 5.47983C15.5087 5.50887 15.7735 5.70344 15.8925 5.98627C16.0115 6.26911 15.9654 6.59445 15.7725 6.83313Z" fill="#0061E0" />
-                  </svg>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-            <p className="text-gray-700 text-sm">العدد المتبقي من اليوم: {plan.duration}</p>
-            
-      
-      
-            <div className="flex justify-between gap-4">
-              <button className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full md:w-auto">
-                تعديل
-              </button>
-              <button className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition w-full md:w-auto">
-                حذف
-              </button>
+        <div className="flex flex-col justify-center items-center gap-6 p-6">
+            <button
+                onClick={() => openModal()}
+                className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+            >
+                إضافة خطة
+            </button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                {plans.map((plan) => (
+                    <div
+                        key={plan.id}
+                        className="border border-gray-300 rounded-lg shadow-md p-6 text-center"
+                    >
+                        <h3 className="text-xl font-bold text-blue-700 mb-4">{plan.name}</h3>
+                        <p className="text-lg font-semibold mb-4">{plan.price} ريال</p>
+                        <p className="text-gray-700 text-sm">المدة: {plan.duration} يوم</p>
+                        <div className="text-gray-700 text-sm mt-2">
+                            <span className="font-bold">المزايا:</span>{" "}
+                            {plan.features.length > 0 ? plan.features.join(", ") : "لا توجد مزايا"}
+                        </div>
+                        <div className="flex justify-between gap-4 mt-4">
+                            <button
+                                onClick={() => openModal(plan)}
+                                className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                            >
+                                تعديل
+                            </button>
+                            <button
+                                onClick={() => handleDelete(plan.id)}
+                                className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+                            >
+                                حذف
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
-          </div>
-        ))}
-      </div>
-      
+
+            {modalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">{editingPlan ? "تعديل الخطة" : "إضافة خطة جديدة"}</h2>
+                        <input
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="الاسم"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+                        {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+
+                        <input
+                            name="price"
+                            value={formData.price}
+                            onChange={handleChange}
+                            placeholder="السعر"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+                        {errors.price && <div className="text-red-500 text-sm">{errors.price}</div>}
+
+                        <input
+                            name="maxChalets"
+                            value={formData.maxChalets}
+                            onChange={handleChange}
+                            placeholder="عدد الشاليهات"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+
+                        <input
+                            name="duration"
+                            value={formData.duration}
+                            onChange={handleChange}
+                            placeholder="المدة (أيام)"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+                        {errors.duration && <div className="text-red-500 text-sm">{errors.duration}</div>}
+
+                        <textarea
+                            name="features"
+                            value={formData.features.join(", ")}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    features: e.target.value.split(",").map((f) => f.trim()),
+                                })
+                            }
+                            placeholder="المزايا (افصل بينها بفاصلة)"
+                            className="w-full p-2 border rounded mb-4 h-20"
+                        />
+                        {errors.features && <div className="text-red-500 text-sm">{errors.features}</div>}
+
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleSubmit}
+                                className="bg-blue-600 text-white py-2 px-4 rounded-lg w-full hover:bg-blue-700"
+                            >
+                                حفظ
+                            </button>
+                            <button
+                                onClick={() => setModalOpen(false)}
+                                className="bg-gray-400 text-white py-2 px-4 rounded-lg w-full hover:bg-gray-500"
+                            >
+                                إلغاء
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }

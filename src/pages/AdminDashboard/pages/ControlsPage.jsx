@@ -1,13 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState ,useMemo } from 'react';
-<<<<<<< HEAD
-import { Bar } from "react-chartjs-2";
-=======
 import { Bar, Doughnut } from "react-chartjs-2";
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Hourglass } from 'react-loader-spinner';
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,11 +12,6 @@ import {
   Title,
   Tooltip,
   Legend,
-<<<<<<< HEAD
-} from "chart.js";
-
-
-=======
   ArcElement,
   RadialLinearScale,
  
@@ -28,21 +19,16 @@ import {
 
 
 
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
   Title,
   Tooltip,
-<<<<<<< HEAD
-  Legend
-=======
   Legend,
   RadialLinearScale,
   ArcElement,
  
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
 );
 
 export default function ControlsPage() {
@@ -51,79 +37,6 @@ export default function ControlsPage() {
   const [users, setUsers] = useState([]);
   const [reservCount, setReservCount] = useState(0);
   const [chaletsCount, setChaletsCount] = useState(0);
-<<<<<<< HEAD
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-
-  const data = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-      {
-        label: "Sales",
-        data: [65, 59, 80, 81, 56, 55, 40],
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-          "rgba(255, 159, 64, 0.2)",
-          "rgba(100, 200, 255, 0.2)",
-        ],
-        borderColor: [
-          "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
-          "rgba(255, 206, 86, 1)",
-          "rgba(75, 192, 192, 1)",
-          "rgba(153, 102, 255, 1)",
-          "rgba(255, 159, 64, 1)",
-          "rgba(100, 200, 255, 1)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const chartData = useMemo(() => {
-    const monthlyData = users.reduce((acc, user) => {
-      const creationDate = new Date(user.timestamp);
-      const monthYear = `${creationDate.getFullYear()}-${creationDate.getMonth() + 1}`;
-
-      if (!acc[monthYear]) acc[monthYear] = 0;
-      acc[monthYear]++;
-      return acc;
-    }, {});
-
-    return {
-      labels: Object.keys(monthlyData),
-      datasets: [
-        {
-          label: "العملاء الجدد لكل شهر",
-          data: Object.values(monthlyData),
-          backgroundColor: "rgba(54, 162, 235, 0.2)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1,
-        },
-      ],
-    };
-  }, [users]); // التحديث يتم فقط عند تغيير users
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" },
-      title: { display: false, text: "العملاء الجدد" },
-    },
-  };
-
-  const getAllUsers = async () => {
-    try {
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/user", {
-        headers: { authorization: token },
-      });
-      setUsers(response.data.data); // حفظ المستخدمين في الـ state
-=======
   const [activeUsers, setActiveUsers] = useState(0);
   const [inactiveUsers, setInactiveUsers] = useState(0);
   const [chalets, setChalets] = useState([]);
@@ -272,7 +185,6 @@ export default function ControlsPage() {
 
 
 
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -286,18 +198,11 @@ export default function ControlsPage() {
         headers: {
           authorization: token,
         },
-<<<<<<< HEAD
-      }
-    );
-    setReserv(response.data.data);
-    // console.log(response.data.data);
-=======
         
       }
     );
     setReserv(response.data.data);
     console.log(response.data);
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
     // console.log(response.data.pagination.totalItems);
     setReservCount(response.data.pagination.totalItems)
     
@@ -305,21 +210,6 @@ export default function ControlsPage() {
   };
 
   const getChalets = async () => {
-<<<<<<< HEAD
-    const response = await axios.get("https://smarch-back-end-nine.vercel.app/chalet/admin", {
-      headers: { authorization: token },
-    });
-   setChaletsCount(response.data.pagination.totalItems);
-  };
-
-
-  useEffect(() => {
-   Promise.all([fetchData(), getAllUsers(), getChalets()]);
-  }, []);
-
-  return (
-    <>
-=======
     try {
       let allChalets = [];
       let currentPage = 1;
@@ -441,20 +331,14 @@ export default function ControlsPage() {
     
   
       
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
 {/* // ✅ المبيعات */}
     <div className="flex flex-wrap gap-4 justify-evenly">
                                                <div className="flex justify-between items-center p-4 rounded-lg shadow w-full sm:w-[48%] md:w-[22%] h-[150px] flex-shrink-0 border border-[#1A71FF]">
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-700 mb-3"> الايرادات</h3>
-<<<<<<< HEAD
-                                <p className="text-2xl font-semibold text-[#101828]">100000 رس</p>
-                            </div>
-=======
                                 <p className="text-2xl font-semibold text-[#101828]">{totalRevenue}</p>
                             </div>
 
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
                             <svg xmlns="http://www.w3.org/2000/svg" width="60" height="61" viewBox="0 0 60 61" fill="none">
                                         <path opacity="0.21" d="M0 30.9067V37.9067C0 50.6093 10.2975 60.9067 23 60.9067H30H37C49.7025 60.9067 60 50.6093 60 37.9067V30.9067V23.9067C60 11.2042 49.7025 0.906738 37 0.906738H30H23C10.2975 0.906738 0 11.2042 0 23.9067V30.9067Z" fill="#4AD991" />
                                         <path d="M19.1111 41.7956H42.4444C43.3036 41.7956 44 42.4921 44 43.3512C44 44.2103 43.3036 44.9067 42.4444 44.9067H17.5556C16.6964 44.9067 16 44.2103 16 43.3512V18.4623C16 17.6032 16.6964 16.9067 17.5556 16.9067C18.4147 16.9067 19.1111 17.6032 19.1111 18.4623V41.7956Z" fill="#4AD991" />
@@ -513,23 +397,6 @@ export default function ControlsPage() {
     
     </div>
 
-<<<<<<< HEAD
-
-
-    <div className="flex flex-wrap gap-4 justify-evenly">
-                                               <div>
-                                                asdasdasdasdasd
-                                               </div>
-
-
-                                               <div>
-                                                asdasdasdasdasd
-                                               </div>
-
-
-                                               <div>
-                                                asdasdasdasdasd
-=======
   
 
     <div className="flex flex-wrap gap-4 justify-around mt-4">
@@ -582,17 +449,13 @@ export default function ControlsPage() {
 
                                                <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%]  flex-shrink-0 border border-[#1A71FF] p-4">
                                                <Doughnut data={data} options={optionsUsers} />
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
                                                </div>
 
 
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
   
 
   
@@ -655,11 +518,8 @@ export default function ControlsPage() {
     </div>
 
     </>
-<<<<<<< HEAD
-=======
     )}
    </div>
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
   );
 }
 

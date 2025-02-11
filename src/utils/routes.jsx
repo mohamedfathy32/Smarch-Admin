@@ -11,11 +11,7 @@ import ReservationRequester from "../pages/AdminDashboard/pages/ReservationReque
 import Supscriptions from "../pages/AdminDashboard/pages/Subscriptions"; // تعديل الاسم هنا
 import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
 import Login from "../pages/AdminDashboard/pages/Login";
-<<<<<<< HEAD
-import ProfilePage from "../pages/AdminDashboard/pages/ProfilePage";
-=======
 import Articles from "../pages/AdminDashboard/pages/Articles";
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
 
 export const router = createBrowserRouter([
   {
@@ -36,11 +32,7 @@ export const router = createBrowserRouter([
       {path:"ReservationRequester", element:<ReservationRequester/>},
       {path:"Supscriptions", element:<Supscriptions/>},
       { path: "Support", element: <SupportPage/> },
-<<<<<<< HEAD
-      {path:"Profile", element: <ProfilePage/>}
-=======
-      {path:"Articles" , element:<Articles />}
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
+      {path:"Articles" , element:<Articles/>}
     ]
   }
 ]);

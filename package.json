@@ -16,19 +16,13 @@
     "@mui/x-charts": "^7.25.0",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
-<<<<<<< HEAD
-    "icons": "^1.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "jwt-decode": "^4.0.0",
-    "react": "^18.3.1",
-    "react-chartjs-2": "^5.3.0",
-    "react-devtools": "^6.1.0",
-=======
     "chartjs-plugin-datalabels": "^2.2.0",
     "formik": "^2.4.6",
     "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-chartjs-2": "^5.3.0",
->>>>>>> 2eb0d277cd08442cd782267ff2a729397ae3ee54
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.1",
     "react-icons": "^5.4.0",
