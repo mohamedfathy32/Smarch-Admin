@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export default function PricePlans() {
     const [plans, setPlans] = useState([]);
@@ -12,6 +13,7 @@ export default function PricePlans() {
         duration: "",
         features: [],
     });
+    const [newFeature, setNewFeature] = useState(""); // For adding new features
     const [errors, setErrors] = useState({});
     const token = localStorage.getItem("token");
 
@@ -90,15 +92,44 @@ export default function PricePlans() {
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (id) => {
+    
         try {
-            await axios.delete(`https://smarch-back-end-nine.vercel.app/package/${editingPlan._id}`, {
+            await axios.delete(`https://smarch-back-end-nine.vercel.app/package/${id}`, {
                 headers: { Authorization: token },
             });
             fetchPlans();
         } catch (error) {
             console.error("Error deleting plan:", error.response?.data || error.message);
         }
+    };
+
+    // Add a new feature
+    const addFeature = () => {
+        if (newFeature.trim()) {
+            setFormData({
+                ...formData,
+                features: [...formData.features, newFeature.trim()],
+            });
+            setNewFeature("");
+        }
+    };
+
+    // Delete a feature
+    const deleteFeature = (index) => {
+        const updatedFeatures = formData.features.filter((_, i) => i !== index);
+        setFormData({ ...formData, features: updatedFeatures });
+    };
+
+    // Handle drag and drop reordering
+    const onDragEnd = (result) => {
+        if (!result.destination) return;
+
+        const items = Array.from(formData.features);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        setFormData({ ...formData, features: items });
     };
 
     return (
@@ -130,7 +161,7 @@ export default function PricePlans() {
                                 تعديل
                             </button>
                             <button
-                                onClick={() => handleDelete(plan.id)}
+                                onClick={() => handleDelete(plan._id)}
                                 className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
                             >
                                 حذف
@@ -179,18 +210,58 @@ export default function PricePlans() {
                         />
                         {errors.duration && <div className="text-red-500 text-sm">{errors.duration}</div>}
 
-                        <textarea
-                            name="features"
-                            value={formData.features.join(", ")}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    features: e.target.value.split(",").map((f) => f.trim()),
-                                })
-                            }
-                            placeholder="المزايا (افصل بينها بفاصلة)"
-                            className="w-full p-2 border rounded mb-4 h-20"
-                        />
+                        {/* Drag and Drop Features */}
+                        <div className="mb-4">
+                            <div className="flex gap-2 mb-2">
+                                <input
+                                    type="text"
+                                    value={newFeature}
+                                    onChange={(e) => setNewFeature(e.target.value)}
+                                    placeholder="إضافة ميزة جديدة"
+                                    className="w-full p-2 border rounded"
+                                />
+                                <button
+                                    onClick={addFeature}
+                                    className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                                >
+                                    إضافة
+                                </button>
+                            </div>
+
+                            <DragDropContext onDragEnd={onDragEnd}>
+                                <Droppable droppableId="features">
+                                    {(provided) => (
+                                        <div
+                                            {...provided.droppableProps}
+                                            ref={provided.innerRef}
+                                            className="space-y-2"
+                                        >
+                                            {formData.features.map((feature, index) => (
+                                                <Draggable key={index} draggableId={`feature-${index}`} index={index}>
+                                                    {(provided) => (
+                                                        <div
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            className="flex justify-between items-center p-2 border rounded bg-gray-50"
+                                                        >
+                                                            <span>{feature}</span>
+                                                            <button
+                                                                onClick={() => deleteFeature(index)}
+                                                                className="text-red-600 hover:text-red-800"
+                                                            >
+                                                                حذف
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                            </DragDropContext>
+                        </div>
                         {errors.features && <div className="text-red-500 text-sm">{errors.features}</div>}
 
                         <div className="flex gap-2">
