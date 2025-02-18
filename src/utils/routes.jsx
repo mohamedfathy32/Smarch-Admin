@@ -22,6 +22,19 @@ export const router = createBrowserRouter([
     path: "/", 
     element: <ProtectedRoute><AdminDashboard /></ProtectedRoute>, 
     children: [
+<<<<<<< HEAD
+      { index: true, element: <ControlsPage /> },
+      {path:"BalanceRecharge",element:<BalanceRecharge/>},
+      {path:"ChaletOwner",element:<ChaletOwner/>},
+      { path: "Notification", element: <Notification/> },
+      {path:"Payments" , element:<Payments/>},
+      { path: "PricingPlans", element: <PricePlans/> },
+      {path:"ReservationManagement",element:<ReservationManagement/>},
+      {path:"ReservationRequester", element:<ReservationRequester/>},
+      {path:"Supscriptions", element:<Supscriptions/>},
+      { path: "Support", element: <SupportPage/> },
+      {path:"Articles" , element:<Articles/>}
+=======
       { index: true, element: <ProtectedRoute><ControlsPage /></ProtectedRoute> },
       {path:"BalanceRecharge",element:<ProtectedRoute><BalanceRecharge/></ProtectedRoute>},
       {path:"ChaletOwner",element:<ProtectedRoute><ChaletOwner/></ProtectedRoute>},
@@ -33,6 +46,7 @@ export const router = createBrowserRouter([
       {path:"Supscriptions", element:<ProtectedRoute><Supscriptions/></ProtectedRoute>},
       { path: "Support", element: <ProtectedRoute><SupportPage/></ProtectedRoute> },
       {path:"Articles" , element:<ProtectedRoute><Articles /></ProtectedRoute>}
+>>>>>>> f8772cf34dab025309dbf3c8d370a5ecf3553eae
     ]
   }
 ]);

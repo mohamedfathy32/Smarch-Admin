@@ -1,10 +1,14 @@
 import { RouterProvider } from "react-router-dom";
 import { router } from "./utils/routes";
+import { NotificationProvider } from "../Context/NotificationContext";
 
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+    <NotificationProvider>
+    <RouterProvider router={router} />
+
+    </NotificationProvider>
     </>
   );
 }

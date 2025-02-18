@@ -57,6 +57,7 @@ export default function HeaderDashboard() {
                     src="/assets/images/copy1.JPG"
                     alt="Profile"
                     className="rounded-full w-10 h-10 "
+                    onClick={() => { nav('/Profile') }}
                 />
             </div>
 
