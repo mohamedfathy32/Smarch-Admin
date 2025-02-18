@@ -6,10 +6,11 @@ import { GrView } from "react-icons/gr";
 import Swal from 'sweetalert2';
 import { Hourglass } from 'react-loader-spinner';
 
+import * as XLSX from "xlsx";
 
 export default function SupportPage() {
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("tokenAdmin");
   console.log(token);
   const [ticket, setTicket] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,7 +85,30 @@ export default function SupportPage() {
 
   }, [currentPage ]);
 
+  const handleExportToExcel = () => {
+    if (ticket.length === 0) {
+      Swal.fire({
+        title: "لا يوجد بيانات لتصدير",
+        icon: "error",
+        confirmButtonText: "موافق",
+      });
+    }
+    const formattedData = ticket.map((ticket, index) => ({
+      'رقم التذاكر': index + 1,
+      'اسم المستخدم': ticket.sender.userName,
+      
+      'تاريخ الإرسال': new Date(ticket.createdAt).toLocaleDateString(),
+      'الموضوع ': ticket.subject,
+      'الحالة': ticket.status,
     
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "التذاكر");
+    XLSX.writeFile(workbook, "التذاكر.xlsx");
+  };
+
 
   return (
     <div>
@@ -166,7 +190,13 @@ export default function SupportPage() {
     </div>
 
 
+     <button
+                        onClick={() => { handleExportToExcel() }}
+                        className="m-3 p-5 text-1xl bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white py-3 rounded-lg"
+                    >
+                        تحميل البيانات
 
+                    </button>
 
     <div className="bg-white p-4 rounded-lg  mt-10 ">
         <table className="w-full">
