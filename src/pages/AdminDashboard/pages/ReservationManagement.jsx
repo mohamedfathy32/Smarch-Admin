@@ -1,88 +1,123 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaEdit } from "react-icons/fa";
 import { Oval } from "react-loader-spinner";
+
 import { Hourglass } from 'react-loader-spinner';
+import * as XLSX from "xlsx";
+import Swal from 'sweetalert2';
 
 export default function ReservationManagement() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("tokenAdmin");
   const [owners, setOwners] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedOwner, setSelectedOwner] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [loadingPage, setLoadingPage] = useState(true); 
-  const [formData, setFormData] = useState({
-    userName: "",
-    email: "",
-    phoneNumber: "",
-    numOfChalets: ""
+  const [loadingFilter, setLoadingFilter] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [filters, setFilters] = useState({
+    city: "",
+   
+    name: "",
+    checkInDate: "",
+    active: "",
   });
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+  const handleFilter = async ( page = 1) => {
+    setLoadingFilter(true);
+    try {
+      const response = await axios.get("https://smarch-back-end-nine.vercel.app/reservation/filter", {
+        headers: { authorization: token },
+        params: {
+          page,
+
+          ...filters,
+
+
+        },
+      });
+      setOwners(response.data.data);
+      setTotalPages(response.data.pagination.totalPages);
+    } catch (error) {
+      console.error("Error filtering reservations:", error);
+    } finally {
+      setLoadingFilter(false);
+    }
+  };
+  useEffect(() => {
+    // إذا كانت جميع الحقول فارغة، جلب جميع البيانات
+    if (
+      filters.city === "" &&
+ 
+        filters.name === "" &&
+      filters.checkInDate === "" 
+      
+    
+    
+      
+    ) {
+      setButtonDisabled(true);
+      fetchData(currentPage); // جلب جميع البيانات الأصلية
+    }
+    else{
+      setButtonDisabled(false);
+    }
+  }, [filters]); // مراقبة تغييرات filters
 
 
   const fetchData = async (page) => {
+    try {
     const response = await axios.get("https://smarch-back-end-nine.vercel.app/reservation", {
       headers: { authorization: token },
       params: { page }
     });
+    console.log(response.data.data)
+
 
     setOwners(response.data.data);
     setLoadingPage(false);
-    console.log(response.data.data);
-    setTotalPages(response.data.pagination.totalPages);
-  };
-
-  useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
-
-  const openModal = (owner) => {
-    setSelectedOwner(owner);
-    setFormData({
-      userName: owner.userName,
-      email: owner.email,
-      phoneNumber: owner.phoneNumber,
-      active:owner.active
-   
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedOwner) return;
-  
-    setLoading(true); // ⬅️ بدء التحميل
-    
-    try {
-      const response = await axios.put(
-        "https://smarch-back-end-nine.vercel.app/user/UpdateData",  
-        { 
-          id: selectedOwner._id,  
-          userName: formData.userName,
-          email: formData.email,
-          phoneNumber: formData.phoneNumber,
-          active: formData.active
-        },
-        { headers: { authorization: token } }
-      );
-  
-      console.log("✅ تم التحديث بنجاح:", response.data);
-      setIsModalOpen(false);
-      fetchData(currentPage);
-    
+      setTotalPages(response.data.pagination.totalPages);
     } catch (error) {
-      console.error("❌ حدث خطأ أثناء التحديث:", error);
-  
+      console.error("Error fetching reservations:", error);
     } finally {
-      setLoading(false); // ⬅️ إنهاء التحميل
+      setLoadingPage(false);
     }
   };
-  
+
+useEffect(() => {
+  if (filters.city || filters.name || filters.checkInDate ) {
+    handleFilter(currentPage); // جلب البيانات المفلترة
+  } else {
+    fetchData(currentPage); // جلب جميع البيانات
+  }
+}, [currentPage]);
+ 
+  const handleExportToExcel = () => {
+    if (owners.length === 0) {
+      Swal.fire({
+        title: "لا يوجد بيانات لتصدير",
+        icon: "error",
+        confirmButtonText: "موافق",
+      });
+    }
+    const formattedData = owners.map(owner => ({
+      'رقم الحجز': owner._id,
+      'اسم العميل': owner.userID.userName,
+      'اسم الشاليه': owner.chaletID.name,
+      'تاريخ الحجز': new Date(owner.checkInDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-'),
+      'تاريخ المغادرة': new Date(owner.checkOutDate).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-'),
+      'مبلغ الحجز': owner.totalPrice,
+      'حالة الحجز': owner.status
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "حجوزات الشاليهات");
+    XLSX.writeFile(workbook, "حجوزات الشاليهات.xlsx");
+  };
+
   return (
     <div>
     {loadingPage ? (
@@ -104,9 +139,13 @@ export default function ReservationManagement() {
     <div className="flex justify-start gap-10 mb-4" style={{ gap: 900 }}>
      
 
-      <button className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition">
-        تصدير 
-      </button>
+    <button
+                        onClick={() => { handleExportToExcel() }}
+                        className="m-5 p-5 text-1xl bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white py-3 rounded-lg"
+                    >
+                        تحميل البيانات
+
+                    </button>
     </div>
     <div className="flex justify-center gap-10 mb-4" style={{ gap: 900 }}>
       <h3 className='text-2xl'>تصفية الحجوزات حسب المعايير</h3>
@@ -118,33 +157,38 @@ export default function ReservationManagement() {
 
     <div className="flex justify-center items-center">
         <div className="flex items-center gap-4 p-4 rounded-lg w-full max-w-2xl">
-          <input
+        <input
             type="text"
-            placeholder="الاسم"
+            placeholder="المدينة"
+            name="city"
+            value={filters.city}
+            onChange={handleFilterChange}
             className="px-3 py-2 border border-gray-300 rounded-md w-full"
           />
+          
+          
           <input
             type="text"
-            placeholder="الحالة"
-            className="px-3 py-2 border border-gray-300 rounded-md w-full"
-          />
-
-
-
-          <input
-            type="email"
-            placeholder="البريد الالكتروني"
+            placeholder="اسم الشاليه"
+            name="name"
+            value={filters.name}
+            onChange={handleFilterChange}
             className="px-3 py-2 border border-#1A71FF rounded-md w-full"
           />
 
           <input
-            type="number"
-            placeholder="رقم الهاتف"
+            type="date"
+            placeholder=" التاريخ"
+            name="checkInDate"
+            value={filters.checkInDate}
+            onChange={handleFilterChange}
             className="px-3 py-2 border border-gray-300 rounded-md w-full"
           />
+        
 
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-[15vw]">
-            بحث
+          <button disabled={ buttonDisabled} className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-[15vw]" onClick={handleFilter}>
+            {loadingFilter ?<Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "بحث"}
+            
           </button>
         </div>
       </div>
@@ -157,6 +201,7 @@ export default function ReservationManagement() {
               <th>رقم الحجز</th>
               <th>اسم العميل</th>
               <th>اسم الشاليه</th>
+              <th>المدينة</th>
               <th>تاريخ الحجز</th>
               <th>تاريخ المغادرة</th>
               <th>مبلغ الحجز</th>
@@ -169,9 +214,10 @@ export default function ReservationManagement() {
               <tr key={owner._id}>
                 {/* <td className="py-2 px-1 text-center text-lg">{index + 1}</td> */}
                 <td className="py-2 px-1 text-center text-lg">{index + 1}</td>
-                <td className="py-2 px-1 text-center text-lg">{owner.userID.userName}</td>
+                {/* <td className="py-2 px-1 text-center text-lg">{owner.userID.userName}</td> */}
 
                 <td className="py-2 px-1 text-center text-lg">{owner.chaletID.name}</td>
+                <td className="py-2 px-1 text-center text-lg">{owner.chaletID.location.city}</td>
                 <td className="py-2 px-1 text-center text-lg"> {new Date(owner.checkInDate  ).getDate()}/{new Date(owner.checkInDate).getMonth() + 1}/{new Date(owner.checkInDate).getFullYear()}</td>
                 <td className="py-2 px-1 text-center text-lg"> {new Date(owner.checkOutDate).getDate()}/{new Date(owner.checkOutDate).getMonth() + 1}/{new Date(owner.checkOutDate).getFullYear()}</td>
                 <td className="py-2 px-1 text-center text-lg">{owner.totalPrice}</td>
@@ -183,10 +229,7 @@ export default function ReservationManagement() {
                   </span>
                 </td>
                 <td className="p-2 text-center">
-                  <button onClick={() => openModal(owner)}  className="text-blue-500 hover:underline">
-                  <FaEdit size={20} />
-                  </button>
-                  <span className="text-3xl">/</span>
+                 
                   <button>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 28 28" fill="none">
                       <path d="M8.1665 24.5C7.52484 24.5 6.97573 24.2717 6.51917 23.8152C6.06261 23.3586 5.83395 22.8091 5.83317 22.1667V7H4.6665V4.66667H10.4998V3.5H17.4998V4.66667H23.3332V7H22.1665V22.1667C22.1665 22.8083 21.9382 23.3578 21.4817 23.8152C21.0251 24.2725 20.4756 24.5008 19.8332 24.5H8.1665ZM10.4998 19.8333H12.8332V9.33333H10.4998V19.8333ZM15.1665 19.8333H17.4998V9.33333H15.1665V19.8333Z" fill="#FF0000" />
@@ -214,37 +257,11 @@ export default function ReservationManagement() {
                 >
                     الصفحة التالية
                 </button>
-            </div>
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
-            <h2 className="text-xl mb-4">تعديل بيانات المالك</h2>
-            <input placeholder='الاسم' type="text" name="userName" value={formData.userName} onChange={handleChange} className="border p-2 w-full mb-2" />
-            <input placeholder='البريد الالكتروني' type="email" name="email" value={formData.email} onChange={handleChange} className="border p-2 w-full mb-2" />
-            <input placeholder='رقم الهاتف' type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className="border p-2 w-full mb-2" />
-            <label className="flex items-center space-x-2 cursor-pointer">
+                </div>
+                </>
+                )}
+                </div>
   
-  <div 
-    className={`w-12 h-6 flex items-center rounded-full p-1 duration-300 ease-in-out cursor-pointer ${
-      formData.active ? 'bg-green-500' : 'bg-red-500'
-    }`} 
-    onClick={() => setFormData({ ...formData, active: !formData.active })} // ✅ تبديل الحالة
-  >
-    <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ${
-      formData.active ? 'translate-x-6' : ''
-    }`}></div>
-  </div>
-</label>
-            <button onClick={handleSubmit} className="bg-blue-500 text-white m-3 px-4 py-2 rounded"> {loading ? (
-    <Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" />
-  ) : "حفظ"}</button>
-            <button onClick={() => setIsModalOpen(false)} className="ml-2 bg-red-500 text-white px-4 py-2 rounded  ">إغلاق</button>
-          </div>
-        </div>
-      )}
-    </>
-    )}
-    </div>
   );
 }
 

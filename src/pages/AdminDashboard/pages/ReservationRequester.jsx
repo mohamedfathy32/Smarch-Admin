@@ -5,9 +5,10 @@ import { Oval } from "react-loader-spinner";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Hourglass } from 'react-loader-spinner';
-
+import Swal from 'sweetalert2';
+import * as XLSX from "xlsx";
 export default function ReservationRequester() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("tokenAdmin");
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -15,7 +16,53 @@ export default function ReservationRequester() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingPage, setLoadingPage] = useState(true); 
+  const [modelRegisterOpen, setModelRegisterOpen] = useState(false);
+  const [loadingFilter, setLoadingFilter] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [noResults, setNoResults] = useState(false)
+  const [filters, setFilters] = useState({
+    userName: "",
+    email: "",
+    phoneNumber: "",
+    active: "",
+  });
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+  const handleFilter = async ( page = 1) => {
+    setLoadingFilter(true);
+    try {
+      const response = await axios.get("https://smarch-back-end-nine.vercel.app/user/filter", {
+        headers: { authorization: token },
+        params: {
+          page,
+          ...filters,
+          role: "user",
+        },
+      });
+      console.log(response.data);
+      setUsers(response.data.data);
+      setTotalPages(response.data.pagination.totalPages);
+      if (response.data.data.length === 0) {
+        setNoResults(true);
+        Swal.fire({
+          title: "لا توجد نتائج",
+          text: "المستخدم غير موجود.",
+          icon: "warning",
+          confirmButtonText: "موافق",
+        });
+      }
+      
+    } catch (error) {
+      console.error("Error filtering users:", error);
+    } finally {
+      setLoadingFilter(false);
+    }
+  };
+
   const fetchData = async (page) => {
+    try {
     const response = await axios.get("https://smarch-back-end-nine.vercel.app/user/users", {
       headers: { authorization: token },
       params: { page },
@@ -23,12 +70,152 @@ export default function ReservationRequester() {
     setUsers(response.data.data);
     setTotalPages(response.data.pagination.totalPages);
     setLoadingPage(false);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoadingPage(false);
+    }
+  };
+
+  useEffect(() => {
+    if (filters.userName || filters.email || filters.phoneNumber || filters.active) {
+      handleFilter(currentPage);
+    } else {
+      fetchData(currentPage);
+    }
+  }, [currentPage]);
+
+  useEffect(() => {
+    // إذا كانت جميع الحقول فارغة، جلب جميع البيانات
+    if (
+      filters.userName === '' &&
+      filters.email==='' &&
+      filters.phoneNumber === '' &&
+      filters.active === '' &&
+      
+      filters.active === ""
+    
+      
+    ) {
+      setButtonDisabled(true);
+      fetchData(currentPage); // جلب جميع البيانات الأصلية
+    }
+    else{
+      setButtonDisabled(false);
+    }
+  }, [filters]); // مراقبة تغييرات filters
+
+
+
+  const RegisterForm = useFormik({
+    initialValues: {
+      userName: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      role: "user",
+    },
+   
+    onSubmit: async (values , {resetForm}) => {
+      setLoading(true);
+      try {
+        await axios.post("https://smarch-back-end-nine.vercel.app/user", values);
+        Swal.fire({
+          title: "تم الحفظ بنجاح",
+          icon: "success",
+          confirmButtonText: "موافق",
+        });
+        setModelRegisterOpen(false);
+        fetchData(currentPage);
+        resetForm();
+      } catch (error) {
+      console.log(error.response.data.message);
+      Swal.fire({
+
+        title: error.response.data.message,
+        icon: "error",
+        confirmButtonText: "موافق",
+      });
+      } finally {
+        setLoading(false);
+      }
+
+
+    },
+      validate: (values) => {
+        const errors = {};
+        if (!values.userName) {
+          errors.userName = "الاسم مطلوب";
+        }else if (values.userName.length < 3 || values.userName.length > 10) {
+          errors.userName = "يجب أن يكون الاسم بين 3 و 10 حرف";
+        }
+        if (!values.email) {
+          errors.email = "البريد الإلكتروني مطلوب";
+        }else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
+          errors.email = "البريد الإلكتروني غير صالح";
+        }
+
+        if (!values.phoneNumber) {
+          errors.phoneNumber = "رقم الهاتف مطلوب";
+        }else if (!/^05[0-9]{8}$/.test(values.phoneNumber)) {
+          errors.phoneNumber = "رقم الهاتف غير صالح";
+        }else if (isNaN(values.phoneNumber)) {
+          errors.phoneNumber = "يجب أن يكون رقم الهاتف رقمًا";
+
+        }
+        if (!values.password) {
+          errors.password = "كلمة المرور مطلوبة";
+
+
+        }else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(values.password)) {
+          errors.password = "يجب أن يكون كلمة المرور على الأقل 8 حروف وتحتوي على حرف كبير وحرف صغير ورقم ورمز خاص";
+
+        }
+
+
+
+        return errors;
+      }
+     
+   });
+
+   const openModelRegister = () => {
+    setModelRegisterOpen(true);
   };
 
 
-  useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
+
+const handleExportToExcel = () => {
+  if (users.length === 0) {
+    Swal.fire({
+      title: "لا يوجد بيانات لتصدير",
+      icon: "error",
+      confirmButtonText: "موافق",
+    });
+  }
+  const formattedData = users.map(user => ({
+    'الحالة': user.active ? 'نشط' : 'معطل',
+    'تاريخ التسجيل': new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-'),
+    'الاسم': user.userName,
+    'البريد الإلكتروني': user.email,
+    'رقم الهاتف': user.phoneNumber
+  }));
+
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.json_to_sheet(formattedData);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "مستخدمي الحجز");
+  XLSX.writeFile(workbook, "مستخدمي الحجز.xlsx");
+};
+
+
+
+
+ 
+
+
+
+
+
 
   const validationSchema = Yup.object().shape({
     userName: Yup.string()
@@ -81,6 +268,10 @@ export default function ReservationRequester() {
     });
     setIsModalOpen(true);
   };
+  
+
+
+
 
   return (
     <div>
@@ -105,11 +296,90 @@ export default function ReservationRequester() {
       <button className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition">
         دعوة مستخدم
       </button>
-      <button className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition">
+      <button className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition" onClick={openModelRegister}>
         مستخدم جديد
       </button>
     </div>
     <div>
+    {modelRegisterOpen && (
+       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+       <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
+         <h2 className="text-xl mb-4">دعوة مستخدم</h2>
+         <form onSubmit={RegisterForm.handleSubmit}>
+           <input
+             placeholder="الاسم"
+
+             type="text"
+             name="userName"
+             value={RegisterForm.values.userName}
+             onChange={RegisterForm.handleChange}
+             onBlur={RegisterForm.handleBlur}
+             className="border p-2 w-full mb-2"
+
+           />
+           {RegisterForm.touched.userName && RegisterForm.errors.userName && (
+             <p className="text-red-500">{RegisterForm.errors.userName}</p>
+           )}
+
+
+           <input
+             placeholder="البريد الالكتروني"
+             type="email"
+             name="email"
+             value={RegisterForm.values.email}
+             onChange={RegisterForm.handleChange}
+             onBlur={RegisterForm.handleBlur}
+             className="border p-2 w-full mb-2"
+           />
+
+           {RegisterForm.touched.email && RegisterForm.errors.email && (
+             <p className="text-red-500">{RegisterForm.errors.email}</p>
+           )}
+
+
+           <input
+             placeholder="رقم الهاتف"
+             type="text"
+             name="phoneNumber"
+             value={RegisterForm.values.phoneNumber}
+             onChange={RegisterForm.handleChange}
+             onBlur={RegisterForm.handleBlur}
+             className="border p-2 w-full mb-2"
+           />
+
+           {RegisterForm.touched.phoneNumber && RegisterForm.errors.phoneNumber && (
+             <p className="text-red-500">{RegisterForm.errors.phoneNumber}</p>
+           )}
+
+           <input
+             placeholder="كلمة المرور"
+             type="password"
+             name="password"
+             value={RegisterForm.values.password}
+             onChange={RegisterForm.handleChange}
+             onBlur={RegisterForm.handleBlur}
+             className="border p-2 w-full mb-2"
+           />
+
+           {RegisterForm.touched.password && RegisterForm.errors.password && (
+             <p className="text-red-500">{RegisterForm.errors.password}</p>
+           )}
+           
+           
+           <button type="submit" className="bg-blue-500 text-white m-3 px-4 py-2 rounded">
+             {loading ? <Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "حفظ"}
+           </button>
+           <button onClick={() => setModelRegisterOpen(false)} className="ml-2 bg-red-500 text-white px-4 py-2 rounded">
+             إغلاق
+           </button>
+         </form>
+
+         
+       </div>
+       
+     </div>
+     
+   )}
    
 
     <div className="flex justify-center items-center">
@@ -117,7 +387,11 @@ export default function ReservationRequester() {
         
           <input
             type="text"
-            placeholder="الحالة"
+            placeholder="الاسم"
+            name="userName"
+            value={filters.userName}
+            onChange={handleFilterChange}
+         
             className="px-3 py-2 border border-gray-300 rounded-md w-full"
           />
 
@@ -126,22 +400,49 @@ export default function ReservationRequester() {
           <input
             type="email"
             placeholder="البريد الالكتروني"
+            name="email"
+            value={filters.email}
+            onChange={handleFilterChange}
+
             className="px-3 py-2 border border-#1A71FF rounded-md w-full"
           />
 
           <input
             type="number"
             placeholder="رقم الهاتف"
+            name="phoneNumber"
+            value={filters.phoneNumber}
+            onChange={handleFilterChange}
+      
             className="px-3 py-2 border border-gray-300 rounded-md w-full"
           />
+          <select
+            name="active"
+            value={filters.active}
+            onChange={handleFilterChange}
+          >
+            <option value="">الجميع</option>
+            <option value="true">نشط</option>
+            <option value="false">معطل</option>
+          </select>
 
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-[15vw]">
-            بحث
+          
+
+          <button disabled={buttonDisabled} className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-[15vw]" onClick={handleFilter}>
+            {loadingFilter ?<Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "بحث"}
+            
           </button>
         </div>
       </div>
 
     </div>
+    <button
+                        onClick={() => { handleExportToExcel() }}
+                          className="m-5 p-5 text-1xl bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white py-3 rounded-lg"
+                    >
+                        تحميل البيانات
+
+                    </button>
       <div className="bg-white p-4 rounded-lg shadow">
         <table className="w-full">
           <thead>
@@ -150,10 +451,14 @@ export default function ReservationRequester() {
               <th>تاريخ التسجيل</th>
               <th>الاسم</th>
               <th>البريد الالكتروني</th>
+              <th>رقم الهاتف</th>
               <th>إجراء</th>
             </tr>
           </thead>
+          
+          
           <tbody>
+            
             {users.map((user) => (
               <tr key={user._id}>
                 <td className="py-2 px-1 text-center text-lg">
@@ -166,6 +471,7 @@ export default function ReservationRequester() {
                 </td>
                 <td className="py-2 px-1 text-center text-lg">{user.userName}</td>
                 <td className="py-2 px-1 text-center text-lg">{user.email}</td>
+                <td className="py-2 px-1 text-center text-lg">{user.phoneNumber}</td>
                 <td className="p-2 text-center">
                   <button onClick={() => openModal(user)} className="text-blue-500 hover:underline">
                     <FaEdit size={20} />

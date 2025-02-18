@@ -32,7 +32,7 @@ ChartJS.register(
 );
 
 export default function ControlsPage() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("tokenAdmin");
   const [reserv, setReserv] = useState([]);
   const [users, setUsers] = useState([]);
   const [reservCount, setReservCount] = useState(0);
@@ -192,9 +192,10 @@ export default function ControlsPage() {
 
 
   const fetchData = async () => {
-    const response = await axios.get(
-      `https://smarch-back-end-nine.vercel.app/reservation?page=${currentPage}&limit=${itemsPerPage}`,
-      {
+    try {
+      const response = await axios.get(
+        `https://smarch-back-end-nine.vercel.app/reservation?page=${currentPage}&limit=${itemsPerPage}`,
+        {
         headers: {
           authorization: token,
         },
@@ -206,7 +207,9 @@ export default function ControlsPage() {
     // console.log(response.data.pagination.totalItems);
     setReservCount(response.data.pagination.totalItems)
     
-    
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+    }
   };
 
   const getChalets = async () => {
@@ -496,7 +499,7 @@ export default function ControlsPage() {
             {reserv.map((reserv , index) => (
               <tr key={reserv._id}>
                 <td className="py-2 px-2 text-center text-sm">{index+1}</td>
-                <td className="py-2 px-2 text-center text-sm">{reserv.userID.userName}</td>
+                {/* <td className="py-2 px-2 text-center text-sm">{reserv.userID.userName}</td> */}
                 <td className="py-2 px-2 text-center text-sm">{reserv.chaletID.name}</td>
                 <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkInDate).toLocaleDateString("ar-EG")}</td>
                 <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkOutDate).toLocaleDateString("ar-EG")}</td>

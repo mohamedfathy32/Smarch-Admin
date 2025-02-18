@@ -31,9 +31,11 @@ function Login() {
         console.log("تم تسجيل الدخول بنجاح:", admin);
 
         // حفظ حالة تسجيل الدخول في Local Storage
-        localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("token", admin.token);
+       
+        localStorage.setItem("tokenAdmin", admin.token);
         localStorage.setItem("admin", admin);
+        localStorage.setItem("isLoggedIn", true);
+      
        
 
         // التوجيه إلى صفحة أخرى بعد تسجيل الدخول

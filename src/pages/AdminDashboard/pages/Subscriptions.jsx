@@ -3,7 +3,8 @@ import axios from 'axios';
 import { FiMoreHorizontal } from "react-icons/fi";
 import Swal from 'sweetalert2';
 import { Hourglass } from 'react-loader-spinner';
-
+import * as XLSX from "xlsx";
+import { Oval } from 'react-loader-spinner';
 
 export default function Subscriptions() {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -14,23 +15,94 @@ export default function Subscriptions() {
   const [loadingPage, setLoadingPage] = useState(true); 
 
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("tokenAdmin");
 
+  const [loadingFilter, setLoadingFilter] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [noResults, setNoResults] = useState(false)
+  const [filters, setFilters] = useState({
+    name: "",
+    isActive: "",
+  });
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+  const handleFilter = async ( page = 1) => {
+    setLoadingFilter(true);
+    try {
+      const response = await axios.get("https://smarch-back-end-nine.vercel.app/subscription/filter", {
+        headers: { authorization: token },
+        params: {
+          page,
+          ...filters,
+                    
+        },
+      });
+      console.log(response.data);
+      setSubscriptions(response.data.data);
+      setTotalPages(response.data.pagination.totalPages);
+      if (response.data.data.length === 0) {
+        setNoResults(true);
+        Swal.fire({
+          title: "لا توجد نتائج",
+          text: "المستخدم غير موجود.",
+          icon: "warning",
+          confirmButtonText: "موافق",
+        });
+      }
+      
+    } catch (error) {
+      console.error("Error filtering users:", error);
+    } finally {
+      setLoadingFilter(false);
+    }
+  };
 
   const fetchData = async (page) => {
+    try {
     const response = await axios.get("https://smarch-back-end-nine.vercel.app/subscription", {
       headers: { authorization: token },
-      params: { page }
+      params: { page },
     });
+    console.log(response.data.data);
     setSubscriptions(response.data.data);
-    // console.log(response.data.data);
-    setLoadingPage(false);
     setTotalPages(response.data.pagination.totalPages);
+    setLoadingPage(false);
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+    } finally {
+      setLoadingPage(false);
+    }
   };
 
   useEffect(() => {
-    fetchData(currentPage);
+    if (filters.name || filters.isActive) {
+      handleFilter(currentPage);
+    } else {
+      fetchData(currentPage);
+    }
   }, [currentPage]);
+
+  useEffect(() => {
+    // إذا كانت جميع الحقول فارغة، جلب جميع البيانات
+    if (
+      filters.name === '' &&
+      filters.isActive === '' 
+    
+      
+    ) {
+      setButtonDisabled(true);
+      fetchData(currentPage); // جلب جميع البيانات الأصلية
+    }
+    else{
+      setButtonDisabled(false);
+    }
+  }, [filters]); // مراقبة تغييرات filters
+
+
+  
+
 
   // إغلاق القائمة المنسدلة عند النقر خارجها
   useEffect(() => {
@@ -117,14 +189,34 @@ export default function Subscriptions() {
     });
   };
 
-  const handleHide = (id) => {
-    console.log("إخفاء الاشتراك:", id);
-    // أضف هنا الوظيفة المناسبة
-  };
 
-  const handlePause = (id) => {
-    console.log("إيقاف الاشتراك:", id);
-    // أضف هنا الوظيفة المناسبة
+
+  const handlePause = async (id) => {
+    Swal.fire({
+      title: 'هل أنت متأكد؟',
+      text: 'هل تريد إيقاف هذا الاشتراك؟',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'نعم، قم بالإيقاف!',
+      cancelButtonText: 'إلغاء'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.patch(`https://smarch-back-end-nine.vercel.app/subscription/status/${id}`, {
+            isActive: false,
+      }, {
+        headers: { authorization: token },
+      });
+      console.log(response.data);
+      fetchData(currentPage);
+    } catch (error) {
+      console.log(error);
+      Swal.fire("خطأ!", "فشل إيقاف الاشتراك. تأكد من أنك تملك الصلاحيات اللازمة.", "error");
+    }
+  }
+  });
   };
 
   const handleTerminate = (id) => {
@@ -153,6 +245,29 @@ export default function Subscriptions() {
     });
   };
 
+  const handleExportToExcel = () => {
+    if (subscriptions.length === 0) {
+      Swal.fire({
+        title: "لا يوجد بيانات لتصدير",
+        icon: "error",
+        confirmButtonText: "موافق",
+      });
+    }
+    const formattedData = subscriptions.map(subscription => ({
+      'الحالة': subscription.isActive ? 'نشط' : 'معطل',
+      'الاسم': subscription.userId.userName,
+      'نوع الخطة': subscription.packageId.name,
+      'يبدأ من': new Date(subscription.startDate).toLocaleDateString(),
+      'ينتهي في': new Date(subscription.endDate).toLocaleDateString(),
+
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "الاشتراكات");
+    XLSX.writeFile(workbook, "الاشتراكات.xlsx");
+  };
+
   return (
     <div>
     {loadingPage ? (
@@ -169,29 +284,48 @@ export default function Subscriptions() {
       </div>
     ) : (
       <>
-        <div className="flex justify-center items-center">
-          <div className="flex items-center gap-4 p-4 rounded-lg w-full max-w-2xl">
-            <input
+       
+       <div className="flex justify-center items-center">
+        <div className="flex items-center gap-4 p-4 rounded-lg w-full max-w-2xl">
+        
+          <input
+            type="text"
+            placeholder="اسم الخطة"
+            name="name"
+            value={filters.name}
+            onChange={handleFilterChange}
+         
+            className="px-3 py-2 border border-gray-300 rounded-md w-full"
+          />
 
-            type="email"
-            placeholder="الحالة"
-            className="px-3 py-2 border border-gray-300 rounded-md w-full"
-          />
-          <input
-            type="text"
-            placeholder="البريد الالكتروني"
-            className="px-3 py-2 border border-#1A71FF rounded-md w-full"
-          />
-          <input
-            type="text"
-            placeholder="رقم الهاتف"
-            className="px-3 py-2 border border-gray-300 rounded-md w-full"
-          />
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-[15vw]">
-            بحث
+
+
+         
+          <select
+            name="isActive"
+            value={filters.isActive}
+            onChange={handleFilterChange}
+          >
+            <option value="">الجميع</option>
+            <option value="true">نشط</option>
+            <option value="false">معطل</option>
+          </select>
+
+          
+
+          <button disabled={buttonDisabled} className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-[15vw]" onClick={handleFilter}>
+            {loadingFilter ?<Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "بحث"}
+            
           </button>
         </div>
       </div>
+      <button
+                        onClick={() => { handleExportToExcel() }}
+                        className="m-5 p-5 text-1xl bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white py-3 rounded-lg"
+                    >
+                        تحميل البيانات
+
+                    </button>
 
       <div className="bg-white p-4 rounded-lg shadow">
         <table className="w-full">
@@ -241,20 +375,18 @@ export default function Subscriptions() {
       تمديد
     </button>
     <button
+    
       onClick={() => handleDelete(subscription._id)}
       className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-500 transition-colors duration-200"
     >
       حذف
     </button>
+
     <button
-      onClick={() => handleHide(subscription._id)}
-      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-yellow-500 transition-colors duration-200"
-    >
-      إخفاء
-    </button>
-    <button
+        disabled={subscription.isActive === false}
+
       onClick={() => handlePause(subscription._id)}
-      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500 transition-colors duration-200"
+      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500 transition-colors duration-200 disabled:opacity-50"
     >
       إيقاف
     </button>

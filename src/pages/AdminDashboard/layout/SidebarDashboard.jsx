@@ -14,6 +14,13 @@ export default function SidebarDashboard({ isOpen }) {
     const toggleDropdown = () => {
         setDropdownOpen((prev) => !prev);
     };
+    const handleLogout = () => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("tokenAdmin");
+        localStorage.removeItem("admin");
+        localStorage.removeItem("token");
+        nav("/login");
+    };
 
     return (
         <aside className={`bg-blue-50 w-64 h-full p-4 md:flex flex-col justify-between ${isOpen ? "" : "hidden"}`}>
@@ -250,7 +257,7 @@ export default function SidebarDashboard({ isOpen }) {
 
 
             <div className="mt-auto">
-                <button className="w-full px-4 py-2 mt-4 bg-[#0061E0] rounded text-white text-2xl">
+                <button className="w-full px-4 py-2 mt-4 bg-[#0061E0] rounded text-white text-2xl" onClick={handleLogout}>
                     تسجيل خروج
                 </button>
             </div>
