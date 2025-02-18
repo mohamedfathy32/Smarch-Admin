@@ -1,7 +1,11 @@
-import React from 'react'
-
+import React, { useState } from 'react'
+import axios from 'axios'
 export default function Notification() {
+ 
+  
   return (
-    <div>Notification</div>
+    <div>
+    <h1>Notification</h1>
+    </div>
   )
 }
