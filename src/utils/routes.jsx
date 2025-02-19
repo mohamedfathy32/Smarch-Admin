@@ -13,16 +13,20 @@ import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
 import Login from "../pages/AdminDashboard/pages/Login";
 import Articles from "../pages/AdminDashboard/pages/Articles";
 import ProtectedRoute from "../pages/AdminDashboard/pages/ProtectedRoute";
+import NotificationDetail from "../pages/AdminDashboard/pages/NotificationDetail";
 export const router = createBrowserRouter([
   {
     path: "/login", 
     element: <Login />
   },
   {
+    path: "/notification/:id",
+    element: <NotificationDetail />,
+  },
+  {
     path: "/", 
     element: <ProtectedRoute><AdminDashboard /></ProtectedRoute>, 
     children: [
-<<<<<<< HEAD
       { index: true, element: <ControlsPage /> },
       {path:"BalanceRecharge",element:<BalanceRecharge/>},
       {path:"ChaletOwner",element:<ChaletOwner/>},
@@ -34,19 +38,6 @@ export const router = createBrowserRouter([
       {path:"Supscriptions", element:<Supscriptions/>},
       { path: "Support", element: <SupportPage/> },
       {path:"Articles" , element:<Articles/>}
-=======
-      { index: true, element: <ProtectedRoute><ControlsPage /></ProtectedRoute> },
-      {path:"BalanceRecharge",element:<ProtectedRoute><BalanceRecharge/></ProtectedRoute>},
-      {path:"ChaletOwner",element:<ProtectedRoute><ChaletOwner/></ProtectedRoute>},
-      { path: "Notification", element: <ProtectedRoute><Notification/></ProtectedRoute> },
-      {path:"Payments" , element:<ProtectedRoute><Payments/></ProtectedRoute>},
-      { path: "PricingPlans", element: <ProtectedRoute><PricePlans/></ProtectedRoute> },
-      {path:"ReservationManagement",element:<ProtectedRoute><ReservationManagement/></ProtectedRoute>},
-      {path:"ReservationRequester", element:<ProtectedRoute><ReservationRequester/></ProtectedRoute>},
-      {path:"Supscriptions", element:<ProtectedRoute><Supscriptions/></ProtectedRoute>},
-      { path: "Support", element: <ProtectedRoute><SupportPage/></ProtectedRoute> },
-      {path:"Articles" , element:<ProtectedRoute><Articles /></ProtectedRoute>}
->>>>>>> f8772cf34dab025309dbf3c8d370a5ecf3553eae
     ]
   }
 ]);
