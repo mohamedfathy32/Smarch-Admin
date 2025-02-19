@@ -1,13 +1,36 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
+import { jwtDecode } from "jwt-decode";
 function Login() {
 
-    const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null); // لتخزين الأخطاء
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("tokenAdmin");
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        // const id = decoded.id;
+        const role = decoded.role;
+        console.log("role: " + role);
+        if ( role == "admin") {
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error("خطأ في فك تشفير التوكين:", error);
+        navigate("/");
+      }
+    } else {
+      navigate("/");
+    }
+  }, [token, navigate]);
+
+
 
 
   const handleSubmit = async (event) => {
@@ -15,7 +38,7 @@ function Login() {
 
     try {
       // إرسال البريد الإلكتروني وكلمة المرور إلى الخادم
-      const response = await axios.post('https://smarch-back-end-nine.vercel.app/admin/login', { email, password });
+      const response = await axios.post(`${import.meta.env.VITE_URL_BACKEND}/admin/login`, { email, password });
       console.log(response);
       Swal.fire({
         title: "نجاح!",
@@ -26,40 +49,41 @@ function Login() {
       // التأكد من نجاح الاستجابة
       if (response.status === 200) {
         const admin = response.data;
-      
+
 
         console.log("تم تسجيل الدخول بنجاح:", admin);
 
         // حفظ حالة تسجيل الدخول في Local Storage
+
+        localStorage.setItem("tokenAdmin", admin.token);
+        // localStorage.setItem("admin", admin);
         localStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("token", admin.token);
-        localStorage.setItem("admin", admin);
-       
+
+
 
         // التوجيه إلى صفحة أخرى بعد تسجيل الدخول
-        navigate("/");
+        navigate("/dashboard");
       } else {
         setError("بيانات تسجيل الدخول غير صحيحة");
       }
     } catch (err) {
-     console.log(err);
-     
+      console.log(err);
+
       // تحقق مما إذا كانت err.response موجودة
       if (err.response) {
         Swal.fire({
-            title: "خطأ!",
-            text: err.response?.data?.message || "حدث خطأ غير متوقع!",
-            icon: "error",
-          });
-      setError(errorMessage);
+          title: "خطأ!",
+          text: err.response?.data?.message || "حدث خطأ غير متوقع!",
+          icon: "error",
+        });
       } else {
         setError("حدث خطأ في الاتصال بالخادم");
       }
     }
   };
 
-    return (<>
-     <div className="flex flex-col md:flex-row justify-around py-10 items-center bg-blue-50 rounded-lg shadow-lg overflow-hidden w-full">
+  return (
+    <div className="flex flex-col md:flex-row justify-around py-10 items-center bg-blue-50 rounded-lg shadow-lg overflow-hidden w-full">
       {/* form section */}
       <div className="w-full md:w-1/3 p-8">
         <h1 className="text-4xl font-bold text-[#1E293B] mb-4">مرحبًا بعودتك!</h1>
@@ -101,7 +125,7 @@ function Login() {
             تسجيل الدخول
           </button>
         </form>
-       
+
       </div>
 
       {/* image section */}
@@ -113,8 +137,8 @@ function Login() {
         />
       </div>
     </div>
-    
-    </>  );
+
+  );
 }
 
 export default Login;

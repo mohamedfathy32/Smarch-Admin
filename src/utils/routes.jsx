@@ -11,26 +11,23 @@ import ReservationRequester from "../pages/AdminDashboard/pages/ReservationReque
 import Supscriptions from "../pages/AdminDashboard/pages/Subscriptions"; // تعديل الاسم هنا
 import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
 import Login from "../pages/AdminDashboard/pages/Login";
-
+import Articles from "../pages/AdminDashboard/pages/Articles";
+import ProtectedRoute from "../pages/AdminDashboard/pages/ProtectedRoute";
 export const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
   {
-    path: "/login", 
-    element: <Login />
-  },
-  {
-    path: "/", 
-    element: <AdminDashboard />, 
-    children: [
+    path: "/dashboard", element: <ProtectedRoute><AdminDashboard /></ProtectedRoute>, children: [
       { index: true, element: <ControlsPage /> },
-      {path:"BalanceRecharge",element:<BalanceRecharge/>},
-      {path:"ChaletOwner",element:<ChaletOwner/>},
-      { path: "Notification", element: <Notification/> },
-      {path:"Payments" , element:<Payments/>},
-      { path: "PricingPlans", element: <PricePlans/> },
-      {path:"ReservationManagement",element:<ReservationManagement/>},
-      {path:"ReservationRequester", element:<ReservationRequester/>},
-      {path:"Supscriptions", element:<Supscriptions/>},
-      { path: "Support", element: <SupportPage/> },
+      { path: "BalanceRecharge", element: <BalanceRecharge /> },
+      { path: "ChaletOwner", element: <ChaletOwner /> },
+      { path: "Notification", element: <Notification /> },
+      { path: "Payments", element: <Payments /> },
+      { path: "PricingPlans", element: <PricePlans /> },
+      { path: "ReservationManagement", element: <ReservationManagement /> },
+      { path: "ReservationRequester", element: <ReservationRequester /> },
+      { path: "Supscriptions", element: <Supscriptions /> },
+      { path: "Support", element: <SupportPage /> },
+      { path: "Articles", element: <Articles /> }
     ]
   }
 ]);
