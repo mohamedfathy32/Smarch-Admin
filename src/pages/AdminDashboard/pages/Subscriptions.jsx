@@ -31,7 +31,7 @@ export default function Subscriptions() {
   const handleFilter = async ( page = 1) => {
     setLoadingFilter(true);
     try {
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/subscription/filter", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/subscription/filter`, {
         headers: { authorization: token },
         params: {
           page,
@@ -61,7 +61,7 @@ export default function Subscriptions() {
 
   const fetchData = async (page) => {
     try {
-    const response = await axios.get("https://smarch-back-end-nine.vercel.app/subscription", {
+    const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/subscription`, {
       headers: { authorization: token },
       params: { page },
     });
@@ -143,7 +143,7 @@ export default function Subscriptions() {
   
     try {
       const response = await axios.patch(
-        `https://smarch-back-end-nine.vercel.app/subscription/renew/${_id}`,
+        `${import.meta.env.VITE_URL_BACKEND}/subscription/renew/${_id}`,
         {}, 
         {
           headers: { authorization: token }, 
@@ -173,7 +173,7 @@ export default function Subscriptions() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`https://smarch-back-end-nine.vercel.app/subscription/delete/${id}`,  {
+          const response = await axios.delete(`${import.meta.env.VITE_URL_BACKEND}/subscription/delete/${id}`,  {
             headers: { authorization: token },
           });
           console.log(response.data);
@@ -204,7 +204,7 @@ export default function Subscriptions() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`https://smarch-back-end-nine.vercel.app/subscription/status/${id}`, {
+          const response = await axios.patch(`${import.meta.env.VITE_URL_BACKEND}/subscription/status/${id}`, {
             isActive: false,
       }, {
         headers: { authorization: token },
@@ -232,7 +232,7 @@ export default function Subscriptions() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`https://smarch-back-end-nine.vercel.app/subscription/end/${id}` , {}, {
+          const response = await axios.patch(`${import.meta.env.VITE_URL_BACKEND}/subscription/end/${id}` , {}, {
             headers: { authorization: token },
           });
           console.log(response.data);

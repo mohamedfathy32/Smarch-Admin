@@ -28,7 +28,7 @@ export default function SupportPage() {
 
   const fetchData = async (page) => {
     try {
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/ticket/admin", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/ticket/admin`, {
         headers: { authorization: token },
         params: { page }
       });
@@ -64,7 +64,7 @@ export default function SupportPage() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.delete(`https://smarch-back-end-nine.vercel.app/ticket/delete/${id}`, {
+          const response = await axios.delete(`${import.meta.env.VITE_URL_BACKEND}/ticket/delete/${id}`, {
             headers: { authorization: token },
           });
           console.log(response);

@@ -33,7 +33,7 @@ export default function ReservationRequester() {
   const handleFilter = async ( page = 1) => {
     setLoadingFilter(true);
     try {
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/user/filter", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/filter`, {
         headers: { authorization: token },
         params: {
           page,
@@ -63,7 +63,7 @@ export default function ReservationRequester() {
 
   const fetchData = async (page) => {
     try {
-    const response = await axios.get("https://smarch-back-end-nine.vercel.app/user/users", {
+    const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/users`, {
       headers: { authorization: token },
       params: { page },
     });
@@ -119,7 +119,7 @@ export default function ReservationRequester() {
     onSubmit: async (values , {resetForm}) => {
       setLoading(true);
       try {
-        await axios.post("https://smarch-back-end-nine.vercel.app/user", values);
+        await axios.post(`${import.meta.env.VITE_URL_BACKEND}/user`, values);
         Swal.fire({
           title: "تم الحفظ بنجاح",
           icon: "success",
@@ -244,7 +244,7 @@ const handleExportToExcel = () => {
       setLoading(true);
       try {
         await axios.put(
-          "https://smarch-back-end-nine.vercel.app/user/UpdateData",
+          `${import.meta.env.VITE_URL_BACKEND}/user/UpdateData`,
           { id: selectedUser._id, ...values },
           { headers: { authorization: token } }
         );

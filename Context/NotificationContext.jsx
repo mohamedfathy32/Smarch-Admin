@@ -25,7 +25,7 @@ export const NotificationProvider = ({ children }) => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(
-          "https://smarch-back-end-nine.vercel.app/notification/admin",
+          `${import.meta.env.VITE_URL_BACKEND}/notification/admin`,
           {
             headers: { Authorization: token },
           }
@@ -68,7 +68,7 @@ export const NotificationProvider = ({ children }) => {
 
     try {
       await axios.put(
-        `https://smarch-back-end-nine.vercel.app/notification/admin/${id}`,
+        `${import.meta.env.VITE_URL_BACKEND}/notification/admin/${id}`,
         { isRead: true },
         {
           headers: { Authorization: token },
@@ -93,7 +93,7 @@ export const NotificationProvider = ({ children }) => {
 
     try {
       await axios.put(
-        `https://smarch-back-end-nine.vercel.app/notification/admin/${id}`,
+        `${import.meta.env.VITE_URL_BACKEND}/notification/admin/${id}`,
         { isRead: false },
         {
           headers: { Authorization: token },

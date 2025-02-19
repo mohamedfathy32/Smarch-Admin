@@ -30,7 +30,7 @@ export default function PricePlans() {
 
     const fetchPlans = async () => {
         try {
-            const response = await axios.get("https://smarch-back-end-nine.vercel.app/package", {
+            const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/package`, {
                 headers: { Authorization: token },
             });
             const data = response.data.data;
@@ -77,7 +77,7 @@ export default function PricePlans() {
         try {
             if (editingPlan) {
                 const response = await axios.put(
-                    `https://smarch-back-end-nine.vercel.app/package/${editingPlan._id}`,
+                    `${import.meta.env.VITE_URL_BACKEND}/package/${editingPlan._id}`,
                     formData,
                     {
                         headers: { Authorization: token },
@@ -91,7 +91,7 @@ export default function PricePlans() {
                     confirmButtonText: "موافق",
                 });
             } else {
-                const response = await axios.post("https://smarch-back-end-nine.vercel.app/package", formData, {
+                const response = await axios.post(`${import.meta.env.VITE_URL_BACKEND}/package`, formData, {
                     headers: { Authorization: token },
                 });
                 Swal.fire({
@@ -128,7 +128,7 @@ export default function PricePlans() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await axios.delete(`https://smarch-back-end-nine.vercel.app/package/${id}`, {
+                    const response = await axios.delete(`${import.meta.env.VITE_URL_BACKEND}/package/${id}`, {
                         headers: { Authorization: token },
                     });
                     Swal.fire({

@@ -22,7 +22,7 @@ export default function ProfilePage() {
 
       const fetchUserData = async () => {
         try {
-          const response = await axios.get(`https://smarch-back-end-nine.vercel.app/user/${id}`, {
+          const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/${id}`, {
 
           });
           console.log("بيانات المستخدم:", response.data);
@@ -58,7 +58,7 @@ export default function ProfilePage() {
     }
 
     try {
-      const response = await axios.put(`https://smarch-back-end-nine.vercel.app/user/UpdateData`, updatedData, {
+      const response = await axios.put(`${import.meta.env.VITE_URL_BACKEND}/user/UpdateData`, updatedData, {
         headers: {
           Authorization: ` ${token}`,
         },

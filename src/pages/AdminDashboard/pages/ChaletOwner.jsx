@@ -48,7 +48,7 @@ export default function ChaletOwner() {
     onSubmit: async (values, { resetForm }) => {
       setLoading(true);
       try {
-        await axios.post("https://smarch-back-end-nine.vercel.app/user", values);
+        await axios.post(`${import.meta.env.VITE_URL_BACKEND}/user`, values);
         Swal.fire({
           title: "تم الحفظ بنجاح",
           icon: "success",
@@ -115,7 +115,7 @@ export default function ChaletOwner() {
   const fetchData = async (page) => {
     try {
 
-      const response = await axios.get(`https://smarch-back-end-nine.vercel.app/user/owners`, {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/owners`, {
         headers: { authorization: token },
         params: { page }
       });
@@ -137,7 +137,7 @@ export default function ChaletOwner() {
   const handleFilter = async (page = 1) => {
     setLoadingFilter(true);
     try {
-      const response = await axios.get(`https://smarch-back-end-nine.vercel.app/user/filter`, {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/filter`, {
         headers: { authorization: token },
         params: {
           page,
@@ -167,11 +167,11 @@ export default function ChaletOwner() {
 
   const handleGoToOwnerDashboard = async (ownerId) => {
     console.log(ownerId);
-    const newTab = window.open("http://localhost:5173/", "_blank");
+    const newTab = window.open("https://fronts-end-smarch.vercel.app/", "_blank");
 
     if (newTab) {
       setTimeout(() => {
-        newTab.postMessage({ id: ownerId }, "http://localhost:5173/");
+        newTab.postMessage({ id: ownerId }, "https://fronts-end-smarch.vercel.app/");
       }, 1000);
     }
 
@@ -240,7 +240,7 @@ export default function ChaletOwner() {
       setLoading(true);
       try {
         await axios.put(
-          "https://smarch-back-end-nine.vercel.app/user/UpdateData",
+          `${import.meta.env.VITE_URL_BACKEND}/user/UpdateData`,
           { id: selectedOwner._id, ...values },
           { headers: { authorization: token } }
         );
