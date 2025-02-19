@@ -40,7 +40,7 @@ export default function HeaderDashboard() {
                     src="/assets/images/logo.png"
                     alt="Logo"
                     className="w-24"
-                    onClick={() => { nav('/') }}
+                    onClick={() => { nav('/dashboard') }}
                 />
             </div>
 

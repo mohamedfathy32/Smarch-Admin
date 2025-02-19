@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import Pusher from "pusher-js";
 import axios from "axios";
 
@@ -6,15 +6,18 @@ import axios from "axios";
 export const NotificationContext = createContext();
 
 // Provider Component
+// eslint-disable-next-line react/prop-types
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
+  // const location = useLocation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (!token) {
+    if (!token ) {
       console.error("No token found! Redirecting to login...");
-      window.location.href = "/login"; 
+      // window.location.href = "/";
+      // console.log(location.pathname)
       return;
     }
 
@@ -24,7 +27,7 @@ export const NotificationProvider = ({ children }) => {
         const response = await axios.get(
           "https://smarch-back-end-nine.vercel.app/notification/admin",
           {
-            headers: { Authorization: token }, 
+            headers: { Authorization: token },
           }
         );
 
@@ -68,7 +71,7 @@ export const NotificationProvider = ({ children }) => {
         `https://smarch-back-end-nine.vercel.app/notification/admin/${id}`,
         { isRead: true },
         {
-          headers: { Authorization: token }, 
+          headers: { Authorization: token },
         }
       );
 
@@ -93,7 +96,7 @@ export const NotificationProvider = ({ children }) => {
         `https://smarch-back-end-nine.vercel.app/notification/admin/${id}`,
         { isRead: false },
         {
-          headers: { Authorization: token }, 
+          headers: { Authorization: token },
         }
       );
 

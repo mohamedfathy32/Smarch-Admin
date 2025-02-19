@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Swal from "sweetalert2";
+import Splash from "../../../components/Splash";
 
 export default function PricePlans() {
     const [plans, setPlans] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [editingPlan, setEditingPlan] = useState(null);
     const [formData, setFormData] = useState({
         name: "",
@@ -15,7 +18,7 @@ export default function PricePlans() {
     });
     const [newFeature, setNewFeature] = useState(""); // For adding new features
     const [errors, setErrors] = useState({});
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("tokenAdmin");
 
     useEffect(() => {
         if (!token) {
@@ -70,38 +73,85 @@ export default function PricePlans() {
 
     const handleSubmit = async () => {
         if (!validate()) return;
-
+        setLoading(true);
         try {
             if (editingPlan) {
-                await axios.put(
+                const response = await axios.put(
                     `https://smarch-back-end-nine.vercel.app/package/${editingPlan._id}`,
                     formData,
                     {
                         headers: { Authorization: token },
                     }
                 );
+                // console.log(formData)
+                Swal.fire({
+                    title: "نجاح ",
+                    text: response.data.message,
+                    icon: "success",
+                    confirmButtonText: "موافق",
+                });
             } else {
-                await axios.post("https://smarch-back-end-nine.vercel.app/package", formData, {
+                const response = await axios.post("https://smarch-back-end-nine.vercel.app/package", formData, {
                     headers: { Authorization: token },
+                });
+                Swal.fire({
+                    title: "نجاح ",
+                    text: response.data.message,
+                    icon: "success",
+                    confirmButtonText: "موافق",
                 });
             }
             setModalOpen(false);
             fetchPlans();
         } catch (error) {
             console.error("Error saving plan:", error.response?.data || error.message);
+            Swal.fire({
+                title: "خطأ ",
+                text: error.response.data.message || "حدث خطأ",
+                icon: "error",
+                confirmButtonText: "موافق",
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDelete = async (id) => {
-    
-        try {
-            await axios.delete(`https://smarch-back-end-nine.vercel.app/package/${id}`, {
-                headers: { Authorization: token },
-            });
-            fetchPlans();
-        } catch (error) {
-            console.error("Error deleting plan:", error.response?.data || error.message);
-        }
+        setLoading(true);
+        Swal.fire({
+            title: "تحذير",
+            text: "هل انت متأكد من حذف هذة الباقه ",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "موافق",
+            cancelButtonText: "لا",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axios.delete(`https://smarch-back-end-nine.vercel.app/package/${id}`, {
+                        headers: { Authorization: token },
+                    });
+                    Swal.fire({
+                        title: "نجاح ",
+                        text: response.data.message,
+                        icon: "success",
+                        confirmButtonText: "موافق",
+                    });
+                    fetchPlans();
+                } catch (error) {
+                    Swal.fire({
+                        title: "خطأ ",
+                        text: error.response.data.message || "حدث خطأ",
+                        icon: "error",
+                        confirmButtonText: "موافق",
+                    });
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
+
+
     };
 
     // Add a new feature
@@ -132,26 +182,42 @@ export default function PricePlans() {
         setFormData({ ...formData, features: items });
     };
 
-    return (
-        <div className="flex flex-col justify-center items-center gap-6 p-6">
+
+
+
+
+
+    return loading ? (
+        <div>Loading ....</div>
+    ) : (
+        <div className="text-center pt-10">
             <button
                 onClick={() => openModal()}
                 className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
             >
                 إضافة خطة
             </button>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            <div className="flex flex-col md:flex-row justify-center items-center gap-6 p-6">
                 {plans.map((plan) => (
                     <div
                         key={plan.id}
-                        className="border border-gray-300 rounded-lg shadow-md p-6 text-center"
+                        className="border border-gray-300 rounded-lg shadow-md p-6 text-center w-[90%] md:w-[25%]"
                     >
-                        <h3 className="text-xl font-bold text-blue-700 mb-4">{plan.name}</h3>
-                        <p className="text-lg font-semibold mb-4">{plan.price} ريال</p>
-                        <p className="text-gray-700 text-sm">المدة: {plan.duration} يوم</p>
-                        <div className="text-gray-700 text-sm mt-2">
-                            <span className="font-bold">المزايا:</span>{" "}
-                            {plan.features.length > 0 ? plan.features.join(", ") : "لا توجد مزايا"}
+                        <h3 className="text-3xl font-bold text-blue-700 mb-4">{plan.name}</h3>
+                        <p className="text-2xl text-start font-semibold mb-4">{plan.price} ريال</p>
+                        <p className="font-semibold text-sm">المدة: {plan.duration} يوم</p>
+                        <div className="font-semibold text-sm mt-2">
+                            <ul className="text-sm font-semibold space-y-2 min-h-28">
+                                {plan.features.map((feature, idx) => (
+                                    <li key={idx} className="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                            <path opacity="0.1" d="M10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10C19.9936 4.47982 15.5202 0.00642897 10 0Z" fill="#0061E0" />
+                                            <path d="M15.7725 6.83313L10.0684 14.574C9.93234 14.7545 9.72948 14.8727 9.50539 14.9022C9.2813 14.9316 9.05478 14.8698 8.87671 14.7306L4.80338 11.474C4.44393 11.1863 4.38573 10.6617 4.67338 10.3023C4.96102 9.94285 5.4856 9.88465 5.84504 10.1723L9.24171 12.8898L14.4309 5.8473C14.601 5.59195 14.8978 5.45078 15.2032 5.47983C15.5087 5.50887 15.7735 5.70344 15.8925 5.98627C16.0115 6.26911 15.9654 6.59445 15.7725 6.83313Z" fill="#0061E0" />
+                                        </svg>
+                                        {feature}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                         <div className="flex justify-between gap-4 mt-4">
                             <button
@@ -210,7 +276,6 @@ export default function PricePlans() {
                         />
                         {errors.duration && <div className="text-red-500 text-sm">{errors.duration}</div>}
 
-                        {/* Drag and Drop Features */}
                         <div className="mb-4">
                             <div className="flex gap-2 mb-2">
                                 <input
@@ -283,4 +348,5 @@ export default function PricePlans() {
             )}
         </div>
     );
+
 }
