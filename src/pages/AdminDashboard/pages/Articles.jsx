@@ -53,7 +53,7 @@ export default function Articles() {
       };
       try {
         await axios.post(
-          "https://smarch-back-end-nine.vercel.app/article",
+          `${import.meta.env.VITE_URL_BACKEND}/article`,
           articleData,
           {
             headers: {
@@ -123,7 +123,7 @@ export default function Articles() {
       };
       try {
         await axios.patch(
-          `https://smarch-back-end-nine.vercel.app/article/${selectedArticleId}`,
+          `${import.meta.env.VITE_URL_BACKEND}/article/${selectedArticleId}`,
           articleData,
           {
             headers: {
@@ -205,7 +205,7 @@ export default function Articles() {
   const fetchArticles = async (page) => {
     setLoading(true);
     try {
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/article", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/article`, {
         headers: { Authorization: token },
         params: { page, limit: 6 },
       });
@@ -234,7 +234,7 @@ export default function Articles() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`https://smarch-back-end-nine.vercel.app/article/${id}`, {
+          await axios.delete(`${import.meta.env.VITE_URL_BACKEND}/article/${id}`, {
             headers: { Authorization: token },
           });
           fetchArticles(currentPage);

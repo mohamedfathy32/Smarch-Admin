@@ -48,7 +48,7 @@ export default function ChaletOwner() {
     onSubmit: async (values , {resetForm}) => {
       setLoading(true);
       try {
-        await axios.post("https://smarch-back-end-nine.vercel.app/user", values);
+        await axios.post(`${import.meta.env.VITE_URL_BACKEND}/user`, values);
         Swal.fire({
           title: "تم الحفظ بنجاح",
           icon: "success",
@@ -115,7 +115,7 @@ export default function ChaletOwner() {
   const fetchData = async (page) => {
     try { 
 
-    const response = await axios.get(`https://smarch-back-end-nine.vercel.app/user/owners`, {
+    const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/owners`, {
       headers: { authorization: token },
       params: { page  }
     });
@@ -137,7 +137,7 @@ export default function ChaletOwner() {
   const handleFilter = async ( page = 1) => {
     setLoadingFilter(true);
     try {
-      const response = await axios.get(`https://smarch-back-end-nine.vercel.app/user/filter`, {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/filter`, {
         headers: { authorization: token },
         params: {
           page,
@@ -166,23 +166,31 @@ export default function ChaletOwner() {
   };
 
   const handleGoToOwnerDashboard = async (ownerId) => {
-    console.log(ownerId);
+    // console.log(ownerId);
   
-    try {
-      const response = await axios.get(`https://smarch-back-end-nine.vercel.app/user/token/${ownerId}`, {
-        headers: { authorization: token },
-      });
-      const tokenOwner = response.data.token;
-      console.log(tokenOwner);
-      localStorage.setItem("token", tokenOwner);
+    // try {
+    //   const response = await axios.get(`https://smarch-back-end-nine.vercel.app/user/token/${ownerId}`, {
+    //     headers: { authorization: token },
+    //   });
+    //   const tokenOwner = response.data.token;
+    //   console.log(tokenOwner);
+    //   localStorage.setItem("token", tokenOwner);
       
 
-      window.location.href = `https://fronts-end-smarch.vercel.app/`;
+    //   window.location.href = `https://fronts-end-smarch.vercel.app`;
     
 
-    } catch (error) {
-      console.error("Error fetching owner dashboard:", error);
-    }
+    // } catch (error) {
+    //   console.error("Error fetching owner dashboard:", error);
+    // }
+    // console.log(ownerId);
+    // const newTab = window.open("http://localhost:5173/", "_blank");
+
+    // if (newTab) {
+    //   setTimeout(() => {
+    //     newTab.postMessage({ id:ownerId }, "http://localhost:5173/");
+    //   }, 1000); 
+    // }
   }
 
   useEffect(() => {
@@ -248,7 +256,7 @@ export default function ChaletOwner() {
       setLoading(true);
       try {
         await axios.put(
-          "https://smarch-back-end-nine.vercel.app/user/UpdateData",
+          `${import.meta.env.VITE_URL_BACKEND}/user/UpdateData`,
           { id: selectedOwner._id, ...values },
           { headers: { authorization: token } }
         );
@@ -277,14 +285,14 @@ export default function ChaletOwner() {
     setModelRegisterOpen(true);
   };
   const handleExportToExcel = () => {
-    if (filteredOwners.length === 0) {
+    if (owners.length === 0) {
       Swal.fire({
         title: "لا يوجد بيانات لتصدير",
         icon: "error",
         confirmButtonText: "موافق",
       });
     }
-    const formattedData = filteredOwners.map(owner => ({
+    const formattedData = owners.map(owner => ({
       'الاسم': owner.userName,
       'البريد الإلكتروني': owner.email,
       'رقم الهاتف': owner.phoneNumber,

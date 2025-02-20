@@ -28,7 +28,7 @@ export default function ReservationManagement() {
   const handleFilter = async ( page = 1) => {
     setLoadingFilter(true);
     try {
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/reservation/filter", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/reservation/filter`, {
         headers: { authorization: token },
         params: {
           page,
@@ -69,7 +69,7 @@ export default function ReservationManagement() {
 
   const fetchData = async (page) => {
     try {
-    const response = await axios.get("https://smarch-back-end-nine.vercel.app/reservation", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/reservation`, {
       headers: { authorization: token },
       params: { page }
     });

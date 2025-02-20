@@ -152,7 +152,7 @@ export default function ControlsPage() {
   };
   const getSubscriptions = async () => {
     try {
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/subscription", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/subscription`, {
         headers: { authorization: token },
         params: { page: 1 }
       });
@@ -170,7 +170,7 @@ export default function ControlsPage() {
   const getAllUsers = async () => {
     try {
 
-      const response = await axios.get("https://smarch-back-end-nine.vercel.app/user", {
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user`, {
         headers: { authorization: token },
       });
       
@@ -194,7 +194,7 @@ export default function ControlsPage() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `https://smarch-back-end-nine.vercel.app/reservation?page=${currentPage}&limit=${itemsPerPage}`,
+        `${import.meta.env.VITE_URL_BACKEND}/reservation?page=${currentPage}&limit=${itemsPerPage}`,
         {
         headers: {
           authorization: token,
@@ -220,7 +220,7 @@ export default function ControlsPage() {
   
       while (currentPage <= totalPages) {
         const response = await axios.get(
-          `https://smarch-back-end-nine.vercel.app/chalet/admin?page=${currentPage}`, 
+          `${import.meta.env.VITE_URL_BACKEND}/chalet/admin?page=${currentPage}`, 
           { headers: { authorization: token } }
         );
   
