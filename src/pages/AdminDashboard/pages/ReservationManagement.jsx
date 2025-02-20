@@ -69,7 +69,7 @@ export default function ReservationManagement() {
 
   const fetchData = async (page) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/reservation`, {
+    const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/reservation`, {
       headers: { authorization: token },
       params: { page }
     });
