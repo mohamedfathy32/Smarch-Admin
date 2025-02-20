@@ -191,56 +191,89 @@ export default function SupportPage() {
           </div>
 
 
-          <button
-            onClick={() => { handleExportToExcel() }}
-            className="m-3 p-5 text-1xl bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white py-3 rounded-lg"
-          >
-            تحميل البيانات
+      <div className="flex justify-center">
+      <button
+    onClick={handleExportToExcel}
+    className="m-5 p-4 text-lg bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white rounded-lg w-full sm:w-auto"
+  >
+    تحميل البيانات
+  </button>
+      </div>
 
+  <div className="bg-white p-4 rounded-lg mt-10 shadow">
+  {/* ✅ جدول عادي للشاشات الكبيرة */}
+  <div className="hidden md:block">
+    <table className="w-full">
+      <thead>
+        <tr className="text-[#0061E0] p-2 text-xl">
+          <th>رقم التذكرة</th>
+          <th>اسم المستخدم</th>
+          <th>تاريخ الإرسال</th>
+          <th>الموضوع</th>
+          <th>الحالة</th>
+          <th>خيارات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ticket.map((ticket, index) => (
+          <tr key={ticket._id}>
+            <td className="py-2 px-1 text-center text-lg">{index + 1}</td>
+            <td className="py-2 px-1 text-center text-lg">{ticket.sender.userName}</td>
+            <td className="py-2 px-1 text-center text-lg">
+              {new Date(ticket.createdAt).toLocaleDateString("ar-EG")}
+            </td>
+            <td className="py-2 px-1 text-center text-lg">{ticket.subject}</td>
+            <td className="py-2 px-1 text-center text-lg">
+              <span className={`border px-3 py-1 text-center rounded-md text-white ${ticket.status === "pending" ? "bg-yellow-500" : ticket.status === "closed" ? "bg-red-500" : "bg-green-500"}`}>
+                {ticket.status}
+              </span>
+            </td>
+            <td className="p-2 text-center">
+              <button className="text-blue-500 hover:underline">
+                <GrView size={20} />
+              </button>
+              <span className="text-3xl">/</span>
+              <button onClick={() => handleDelete(ticket._id)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 28 28" fill="none">
+                  <path d="M8.1665 24.5C7.52484 24.5 6.97573 24.2717 6.51917 23.8152C6.06261 23.3586 5.83395 22.8091 5.83317 22.1667V7H4.6665V4.66667H10.4998V3.5H17.4998V4.66667H23.3332V7H22.1665V22.1667C22.1665 22.8083 21.9382 23.3578 21.4817 23.8152C21.0251 24.2725 20.4756 24.5008 19.8332 24.5H8.1665ZM10.4998 19.8333H12.8332V9.33333H10.4998V19.8333ZM15.1665 19.8333H17.4998V9.33333H15.1665V19.8333Z" fill="#FF0000"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  {/* ✅ بطاقات (Cards) للشاشات الصغيرة */}
+  <div className="md:hidden">
+    {ticket.map((ticket, index) => (
+      <div key={ticket._id} className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-semibold text-gray-800">تذكرة #{index + 1}</h3>
+          <span className={`px-3 py-1 rounded-md text-white ${ticket.status === "pending" ? "bg-yellow-500" : ticket.status === "closed" ? "bg-red-500" : "bg-green-500"}`}>
+            {ticket.status}
+          </span>
+        </div>
+        <p className="text-gray-700"><strong>المستخدم:</strong> {ticket.sender.userName}</p>
+        <p className="text-gray-700"><strong>تاريخ الإرسال:</strong> {new Date(ticket.createdAt).toLocaleDateString("ar-EG")}</p>
+        <p className="text-gray-700"><strong>الموضوع:</strong> {ticket.subject}</p>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button className="bg-blue-500 text-white px-3 py-1 rounded-md flex items-center">
+            <GrView size={20} className="mr-1" /> عرض
           </button>
+          <button onClick={() => handleDelete(ticket._id)} className="bg-red-500 text-white px-3 py-1 rounded-md flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 28 28" fill="none" className="mr-1">
+              <path d="M8.1665 24.5C7.52484 24.5 6.97573 24.2717 6.51917 23.8152C6.06261 23.3586 5.83395 22.8091 5.83317 22.1667V7H4.6665V4.66667H10.4998V3.5H17.4998V4.66667H23.3332V7H22.1665V22.1667C22.1665 22.8083 21.9382 23.3578 21.4817 23.8152C21.0251 24.2725 20.4756 24.5008 19.8332 24.5H8.1665ZM10.4998 19.8333H12.8332V9.33333H10.4998V19.8333ZM15.1665 19.8333H17.4998V9.33333H15.1665V19.8333Z" fill="#fff"/>
+            </svg> حذف
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
-          <div className="bg-white p-4 rounded-lg  mt-10 ">
-            <table className="w-full">
-              <thead>
-                <tr className="text-[#0061E0] p-2 text-xl">
-                  <th>رقم التذكرة</th>
-                  <th> اسم المستخدم</th>
-                  <th> تاريخ الارسال</th>
-                  <th> الموضوع</th>
-
-                  <th>الحالة</th>
-                  <th>خيارات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ticket.map((ticket, index) => (
-                  <tr key={ticket._id}>
-                    <td className="py-2 px-1 text-center text-lg">{index + 1}</td>
-                    <td className="py-2 px-1 text-center text-lg">{ticket.sender.userName}</td>
-                    <td className="py-2 px-1 text-center text-lg">{new Date(ticket.createdAt).toLocaleDateString("ar-EG")}</td>
-                    <td className="py-2 px-1 text-center text-lg">{ticket.subject}</td>
-
-                    <td className="py-2 px-1 text-center text-lg">
-                      <span className={`border px-3 py-1 text-center rounded-md text-white ${ticket.status === "pending" ? "bg-yellow-500" : ticket.status === "closed" ? " bg-red-500" : "bg-green-500 "}`}>
-                        {ticket.status}
-                      </span>
-                    </td>
-                    <td className="p-2 text-center">
-                      <button className="text-blue-500 hover:underline">
-                        <GrView size={20} />
-                      </button>
-                      <span className="text-3xl">/</span>
-                      <button onClick={() => handleDelete(ticket._id)}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 28 28" fill="none">
-                          <path d="M8.1665 24.5C7.52484 24.5 6.97573 24.2717 6.51917 23.8152C6.06261 23.3586 5.83395 22.8091 5.83317 22.1667V7H4.6665V4.66667H10.4998V3.5H17.4998V4.66667H23.3332V7H22.1665V22.1667C22.1665 22.8083 21.9382 23.3578 21.4817 23.8152C21.0251 24.2725 20.4756 24.5008 19.8332 24.5H8.1665ZM10.4998 19.8333H12.8332V9.33333H10.4998V19.8333ZM15.1665 19.8333H17.4998V9.33333H15.1665V19.8333Z" fill="#FF0000" />
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
           <div className="flex justify-between mt-4">
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
