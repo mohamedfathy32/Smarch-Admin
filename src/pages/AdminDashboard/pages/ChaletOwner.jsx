@@ -115,15 +115,15 @@ export default function ChaletOwner() {
   const fetchData = async (page) => {
     try {
 
-    const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/owners`, {
-      headers: { authorization: token },
-      params: { page  }
-    });
-    console.log(response.data);
-    setOwners(response.data.data);
-    setTotalPages(response.data.pagination.totalPages);
-    setLoadingPage(false);
-    } catch (error) { 
+      const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user/owners`, {
+        headers: { authorization: token },
+        params: { page }
+      });
+      console.log(response.data);
+      setOwners(response.data.data);
+      setTotalPages(response.data.pagination.totalPages);
+      setLoadingPage(false);
+    } catch (error) {
       console.error("Error fetching owners:", error);
     } finally {
       setLoadingPage(false);
@@ -269,14 +269,14 @@ export default function ChaletOwner() {
     setModelRegisterOpen(true);
   };
   const handleExportToExcel = () => {
-    if (owners.length === 0) {
+    if (filteredOwners.length === 0) {
       Swal.fire({
         title: "لا يوجد بيانات لتصدير",
         icon: "error",
         confirmButtonText: "موافق",
       });
     }
-    const formattedData = owners.map(owner => ({
+    const formattedData = filteredOwners.map(owner => ({
       'الاسم': owner.userName,
       'البريد الإلكتروني': owner.email,
       'رقم الهاتف': owner.phoneNumber,
@@ -631,5 +631,6 @@ export default function ChaletOwner() {
         </>
       )}
     </div>
+      
   );
 }
