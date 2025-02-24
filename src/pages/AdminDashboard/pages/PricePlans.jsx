@@ -15,7 +15,7 @@ export default function PricePlans() {
     });
     const [newFeature, setNewFeature] = useState(""); // For adding new features
     const [errors, setErrors] = useState({});
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("tokenAdmin");
 
     useEffect(() => {
         if (!token) {

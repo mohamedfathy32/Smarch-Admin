@@ -10,7 +10,7 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("tokenAdmin");
 
     if (!token) {
       console.error("No token found! Redirecting to login...");
@@ -85,7 +85,7 @@ export const NotificationProvider = ({ children }) => {
 
   // Mark notification as unread
   const markUnRead = async (id) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("tokenAdmin");
     if (!token) return;
 
     try {
