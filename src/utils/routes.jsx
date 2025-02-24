@@ -13,6 +13,7 @@ import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
 import Login from "../pages/AdminDashboard/pages/Login";
 import Articles from "../pages/AdminDashboard/pages/Articles";
 import ProtectedRoute from "../pages/AdminDashboard/pages/ProtectedRoute";
+import NotificationDetail from "../pages/AdminDashboard/pages/NotificationDetail";
 export const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   {
