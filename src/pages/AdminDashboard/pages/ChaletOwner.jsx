@@ -167,11 +167,11 @@ export default function ChaletOwner() {
 
   const handleGoToOwnerDashboard = async (ownerId) => {
     console.log(ownerId);
-    const newTab = window.open("https://fronts-end-smarch.vercel.app/", "_blank");
+    const newTab = window.open("http://localhost:5173/", "_blank");
 
     if (newTab) {
       setTimeout(() => {
-        newTab.postMessage({ id: ownerId }, "https://fronts-end-smarch.vercel.app/");
+        newTab.postMessage({ id: ownerId }, "http://localhost:5173/");
       }, 1000);
     }
 

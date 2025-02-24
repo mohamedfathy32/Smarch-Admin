@@ -28,7 +28,8 @@ export const router = createBrowserRouter([
       { path: "ReservationRequester", element: <ReservationRequester /> },
       { path: "Supscriptions", element: <Supscriptions /> },
       { path: "Support", element: <SupportPage /> },
-      { path: "Articles", element: <Articles /> }
+      { path: "Articles", element: <Articles /> },
     ]
-  }
+  },
+  { path: "notification/:id", element: <NotificationDetail /> },
 ]);

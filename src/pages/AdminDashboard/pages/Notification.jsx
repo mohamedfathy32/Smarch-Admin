@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { FaCheckSquare } from "react-icons/fa";
 import { NotificationContext } from "../../../../Context/NotificationContext";
 
@@ -16,9 +16,8 @@ export default function Notification() {
           {notifications.map((notif, index) => (
             <div
               key={index}
-              className={`border rounded-lg p-4 shadow-md transition-all duration-300 ${
-                notif.isRead ? "bg-gray-100" : "bg-blue-50 border-blue-400"
-              }`}
+              className={`border rounded-lg p-4 shadow-md transition-all duration-300 ${notif.isRead ? "bg-gray-100" : "bg-blue-50 border-blue-400"
+                }`}
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -27,9 +26,9 @@ export default function Notification() {
                   </h3>
 
                   <p className="text-sm text-gray-500 mt-1">
-                    {notif.createdAt} 
+                    {notif.createdAt}
                   </p>
-           
+
 
                 </div>
 

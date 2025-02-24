@@ -7,11 +7,9 @@ export default function NotificationModal({ onClose }) {
   const { notifications, markAsRead } = useContext(NotificationContext);
   const navigate = useNavigate();
 
-  const handleNotificationClick = (notif) => {
-    markAsRead(notif._id);
-    navigate(`/notification/${notif.relatedEntityId}`, {
-      state: { notificationID: notif._id },
-    }); // Navigate to detail page
+  const handleNotificationClick = (id) => {
+    // markAsRead(notif._id);
+    navigate(`/notification/${id}`); // Navigate to detail page
     onClose(); // Close modal
   };
 
@@ -37,17 +35,15 @@ export default function NotificationModal({ onClose }) {
             {notifications.map((notif) => (
               <div
                 key={notif._id}
-                onClick={() => handleNotificationClick(notif)}
-                className={`p-3 border rounded-md shadow-sm cursor-pointer ${
-                  notif.isRead ? "bg-gray-100" : "bg-blue-50 border-blue-400"
-                }`}
+                onClick={() => handleNotificationClick(notif.relatedEntityId)}
+                className={`p-3 border rounded-md shadow-sm cursor-pointer ${notif.isRead ? "bg-gray-100" : "bg-blue-50 border-blue-400"
+                  }`}
               >
                 <p
-                  className={`text-sm ${
-                    notif.isRead
+                  className={`text-sm ${notif.isRead
                       ? "text-gray-600"
                       : "text-blue-700 font-semibold"
-                  }`}
+                    }`}
                 >
                   {notif.text}
                 </p>
