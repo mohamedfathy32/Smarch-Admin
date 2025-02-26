@@ -67,9 +67,9 @@ export const NotificationProvider = ({ children }) => {
     if (!token) return;
 
     try {
-      await axios.put(
-        `${import.meta.env.VITE_URL_BACKEND}/notification/admin/${id}`,
-        { isRead: true },
+      await axios.patch(
+        `${import.meta.env.VITE_URL_BACKEND}/notification/isRead/${id}`,
+        { isRead: true }, 
         {
           headers: { Authorization: token },
         }
@@ -92,9 +92,9 @@ export const NotificationProvider = ({ children }) => {
     if (!token) return;
 
     try {
-      await axios.put(
-        `${import.meta.env.VITE_URL_BACKEND}/notification/admin/${id}`,
-        { isRead: false },
+      await axios.patch(
+        `${import.meta.env.VITE_URL_BACKEND}/notification/isRead/${id}`,
+        { isRead: false }, 
         {
           headers: { Authorization: token },
         }

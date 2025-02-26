@@ -14,6 +14,7 @@ export default function NotificationDetail() {
     const [chalet, setChalet] = useState([]);
     const [loading, setLoading] = useState(true);
     const [openSection, setOpenSection] = useState("المرافق");
+    const token = localStorage.getItem("tokenAdmin");
 
     const toggleSection = (section) => {
         setOpenSection(openSection === section ? null : section);
@@ -30,75 +31,46 @@ export default function NotificationDetail() {
     // }
 
 
-    const handleApprove = async () => {
+    const handlePatch = async (status) => {
+        const confirmText = status === "active" ? "هل أنت متأكد من الموافقة على الشاليه؟" : "هل أنت متأكد من رفض الشاليه؟";
+        const successText = status === "active" ? "تمت الموافقة على الشاليه بنجاح" : "تم رفض الشاليه بنجاح";
+        const errorText = status === "active" ? "حدث خطأ أثناء الموافقة على الشاليه" : "حدث خطأ أثناء رفض الشاليه";
+
         const result = await Swal.fire({
             title: "تأكيد",
-            text: "هل أنت متأكد من الموافقة على الشاليه؟",
+            text: confirmText,
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "نعم، موافق",
+            confirmButtonText: "نعم",
             cancelButtonText: "إلغاء",
         });
 
         if (result.isConfirmed) {
             try {
-                const response = await axios.put(`https://smarch-back-end-nine.vercel.app/notification/admin/${id}/approve`);
+                const response = await axios.patch(
+                    `https://smarch-back-end-nine.vercel.app/chalet/status/${id}`,
+                    { status },
+                    { headers: { Authorization:token } }
+                );
                 console.log(response.data.data);
 
                 Swal.fire({
                     title: "ناجح",
-                    text: "تمت الموافقة على الشاليه بنجاح",
+                    text: successText,
                     icon: "success",
                     confirmButtonText: "حسنًا",
                 });
-
             } catch (error) {
-                console.error("Error approving request:", error);
+                console.error("Error updating request:", error);
                 Swal.fire({
                     title: "خطأ",
-                    text: "حدث خطأ أثناء الموافقة على الشاليه",
+                    text: errorText,
                     icon: "error",
                     confirmButtonText: "حسنًا",
                 });
             }
         }
     };
-
-
-
-    const handleDecline = async () => {
-        const result = await Swal.fire({
-            title: "تأكيد الرفض",
-            text: "هل أنت متأكد من رفض الشاليه؟",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "نعم، رفض",
-            cancelButtonText: "إلغاء",
-        });
-
-        if (result.isConfirmed) {
-            try {
-                await axios.put(`https://smarch-back-end-nine.vercel.app/notification/admin/${id}/decline`);
-
-                Swal.fire({
-                    title: "تم الرفض",
-                    text: "تم رفض الشاليه بنجاح",
-                    icon: "success",
-                    confirmButtonText: "حسنًا",
-                });
-
-            } catch (error) {
-                console.error("Error declining request:", error);
-                Swal.fire({
-                    title: "خطأ",
-                    text: "حدث خطأ أثناء رفض الشاليه",
-                    icon: "error",
-                    confirmButtonText: "حسنًا",
-                });
-            }
-        }
-    };
-
 
     useEffect(() => {
         const getChalet = async () => {
@@ -106,7 +78,7 @@ export default function NotificationDetail() {
                 const response = await axios.get(
                     `https://smarch-back-end-nine.vercel.app/chalet/${id}`
                 );
-                setChalet(response.data.data); // حفظ بيانات الشاليه في الـ state
+                setChalet(response.data.data);
                 console.log(response.data);
             } catch (error) {
                 console.error("Error fetching chalet details:", error);
@@ -116,8 +88,7 @@ export default function NotificationDetail() {
         };
 
         getChalet();
-    }, [id]); // يتم استدعاء useEffect عند تغيير id
-
+    }, [id]);
     if (loading) {
         return <div className="text-center">Loading...</div>;
     }
@@ -129,13 +100,13 @@ export default function NotificationDetail() {
 
                 <div className="my-6 sm:my-8 px-4 sm:px-8 flex justify-center gap-5 ">
                     <button
-                        onClick={handleApprove}
+                        onClick={()=>handlePatch("active")}
                         className="flex items-center gap-5 bg-green-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
                     >
                         تأكيد الشاليه
                     </button>
                     <button
-                        onClick={handleDecline}
+                        onClick={()=>handlePatch("rejected")}
                         className="flex items-center gap-5 bg-red-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
                     >
                         رفض الشاليه
