@@ -2,6 +2,7 @@ import {  useState } from 'react';
 import { IoIosMenu } from "react-icons/io";
 import SidebarDashboard from './SidebarDashboard';
 import { useNavigate } from 'react-router-dom';
+import ProfilePage from '../pages/ProfilePage';
 
 
 export default function HeaderDashboard() {
@@ -52,13 +53,7 @@ export default function HeaderDashboard() {
             />
 
             <div className="flex items-center gap-2">
-                <span className="hidden md:block">fathy</span>
-                <img
-                    src="/assets/images/copy1.JPG"
-                    alt="Profile"
-                    className="rounded-full w-10 h-10 "
-                    onClick={() => { nav('/Profile') }}
-                />
+              <ProfilePage />
             </div>
 
             {/* Sidebar (Aside) */}

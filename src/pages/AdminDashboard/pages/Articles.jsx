@@ -395,6 +395,7 @@ export default function Articles() {
                     </div>
 
                     {/* عرض قائمة المقالات */}
+                    {articles.length > 0 ? (
                     <div className="max-w-5xl mx-auto mt-10">
                         <h2 className="text-3xl font-bold mb-6 text-center">📜 قائمة المقالات</h2>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -449,6 +450,11 @@ export default function Articles() {
                             </button>
                         </div>
                     </div>
+                    ) : (
+                        <div className="text-center text-gray-500 text-lg py-4">
+                            لا يوجد مقالات بعد
+                        </div>
+                    )}
 
                     {/* مودال التعديل باستخدام editFormik */}
                     {isModalOpen && (

@@ -440,6 +440,7 @@ const handleExportToExcel = () => {
       <div className="bg-white p-4 rounded-lg shadow">
         {/* ✅ جدول عادي على الشاشات المتوسطة والكبيرة */}
         <div className="hidden md:block overflow-x-auto">
+        {users.length > 0 ? (
         <table className="w-full">
           <thead>
             <tr className="text-[#0061E0] p-2 text-xl">
@@ -484,9 +485,17 @@ const handleExportToExcel = () => {
           </tbody>
           
           </table>
+
+        ) : (
+          <div className="text-center text-gray-500 text-lg py-4">
+            لا يوجد زائرين بعد
+          </div>
+        )}
         </div>
+        
       </div>
         {/* ✅ عرض كـ Cards على الشاشات الصغيرة */}
+        {users.length > 0 ? (
         <div className="md:hidden flex flex-col gap-4">
     {users.map((user) => (
       <div key={user._id} className="border rounded-lg shadow p-4 bg-gray-100">
@@ -514,6 +523,11 @@ const handleExportToExcel = () => {
       </div>
     ))}
   </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد زائرين بعد
+    </div>
+  )}
 
 
       

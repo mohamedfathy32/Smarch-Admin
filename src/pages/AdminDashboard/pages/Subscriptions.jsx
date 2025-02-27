@@ -332,7 +332,11 @@ export default function Subscriptions() {
 
                     <div className="bg-white p-4 rounded-lg shadow">
   {/* ✅ جدول عادي للشاشات الكبيرة */}
+  {subscriptions.length > 0 ? (
   <div className="hidden md:block">
+ 
+
+    
     <table className="w-full">
       <thead>
         <tr className="text-[#0061E0] p-2 text-xl">
@@ -386,8 +390,14 @@ export default function Subscriptions() {
       </tbody>
     </table>
   </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد اشتراكات بعد
+    </div>
+  )}
 
   {/* ✅ بطاقات (Cards) للشاشات الصغيرة */}
+  {subscriptions.length > 0 ? (
   <div className="md:hidden">
     {subscriptions.map((subscription) => (
       <div key={subscription._id} className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
@@ -418,6 +428,11 @@ export default function Subscriptions() {
       </div>
     ))}
   </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد اشتراكات بعد
+    </div>
+  )}
 </div>
 
 

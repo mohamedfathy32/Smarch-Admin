@@ -200,7 +200,7 @@ export default function PricePlans() {
             <div className="flex flex-col md:flex-row justify-center items-center gap-6 p-6">
                 {plans.map((plan) => (
                     <div
-                        key={plan.id}
+                        key={plan._id}
                         className="border border-gray-300 rounded-lg shadow-md p-6 text-center w-[90%] md:w-[25%]"
                     >
                         <h3 className="text-3xl font-bold text-blue-700 mb-4">{plan.name}</h3>

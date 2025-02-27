@@ -86,7 +86,7 @@ export default function ReservationManagement() {
       setLoadingPage(false);
     }
   };
-
+ 
 useEffect(() => {
   if (filters.city || filters.name || filters.checkInDate ) {
     handleFilter(currentPage); // جلب البيانات المفلترة
@@ -202,6 +202,7 @@ useEffect(() => {
       <div className="bg-white p-4 rounded-lg shadow">
         {/* ✅ جدول عادي على الشاشات المتوسطة والكبيرة */}  
         <div className="hidden md:block overflow-x-auto"> 
+        {owners.length > 0 ? (
         <table className="w-full">
           <thead>
             <tr className="text-[#0061E0] p-2 text-xl">
@@ -237,7 +238,7 @@ useEffect(() => {
                 </td>
                 <td className="p-2 text-center">
                  
-                  <button>
+                  <button >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 28 28" fill="none">
                       <path d="M8.1665 24.5C7.52484 24.5 6.97573 24.2717 6.51917 23.8152C6.06261 23.3586 5.83395 22.8091 5.83317 22.1667V7H4.6665V4.66667H10.4998V3.5H17.4998V4.66667H23.3332V7H22.1665V22.1667C22.1665 22.8083 21.9382 23.3578 21.4817 23.8152C21.0251 24.2725 20.4756 24.5008 19.8332 24.5H8.1665ZM10.4998 19.8333H12.8332V9.33333H10.4998V19.8333ZM15.1665 19.8333H17.4998V9.33333H15.1665V19.8333Z" fill="#FF0000" />
                     </svg>
@@ -247,9 +248,15 @@ useEffect(() => {
             ))}
           </tbody>
         </table>
+        ) : (
+          <div className="text-center text-gray-500 text-lg py-4">
+            لا يوجد بيانات
+          </div>
+        )}
         </div>
       </div>
         {/* ✅ عرض كـ Cards على الشاشات الصغيرة */}
+        {owners.length > 0 ? (
         <div className="md:hidden flex flex-col gap-4">
     {owners.map((owner) => (
       <div key={owner._id} className="border rounded-lg shadow p-4 bg-gray-100">
@@ -280,6 +287,11 @@ useEffect(() => {
       </div>
     ))}
   </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد بيانات
+    </div>
+  )}
 
       <div className="flex justify-between mt-4">
                 <button

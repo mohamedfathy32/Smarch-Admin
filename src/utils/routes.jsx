@@ -13,6 +13,7 @@ import SupportPage from "../pages/AdminDashboard/pages/SupportPage";
 import Login from "../pages/AdminDashboard/pages/Login";
 import Articles from "../pages/AdminDashboard/pages/Articles";
 import ProtectedRoute from "../pages/AdminDashboard/pages/ProtectedRoute";
+import ChatAdmin from "../pages/AdminDashboard/pages/ChatAdmin";
 export const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   {
@@ -27,7 +28,8 @@ export const router = createBrowserRouter([
       { path: "ReservationRequester", element: <ReservationRequester /> },
       { path: "Supscriptions", element: <Supscriptions /> },
       { path: "Support", element: <SupportPage /> },
-      { path: "Articles", element: <Articles /> }
+      { path: "Articles", element: <Articles /> },
+      { path: "ChatAdmin/:id", element: <ChatAdmin /> }
     ]
   }
 ]);

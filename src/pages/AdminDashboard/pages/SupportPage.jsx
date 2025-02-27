@@ -8,11 +8,11 @@ import { Hourglass } from 'react-loader-spinner';
 
 import * as XLSX from "xlsx";
 
-
+import { useNavigate } from "react-router-dom";
 export default function SupportPage() {
 
   const token = localStorage.getItem("tokenAdmin");
-  console.log(token);
+  // console.log(token);
   const [ticket, setTicket] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -21,6 +21,7 @@ export default function SupportPage() {
   const [totalClosedTickets, setTotalClosedTickets] = useState(0);
   const [loadingPage, setLoadingPage] = useState(true);
 
+  const navigate = useNavigate();
 
 
 
@@ -32,6 +33,7 @@ export default function SupportPage() {
         headers: { authorization: token },
         params: { page }
       });
+      console.log(response.data.data);
       setTicket(response.data.data);
       setTotalPendingTickets(response.data.numOfTicketsPending)
       setTotalClosedTickets(response.data.numOfTicketsClosed)
@@ -109,6 +111,55 @@ export default function SupportPage() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "التذاكر");
     XLSX.writeFile(workbook, "التذاكر.xlsx");
   };
+
+  const getTicketByChatId = (chatId , id , status) => {
+    if (chatId) {
+      navigate(`/dashboard/ChatAdmin/${chatId}`);
+      console.log(chatId);
+    } else {
+      if(status === "closed"){
+        Swal.fire({
+          title: "لا يمكن إنشاء تذكرة جديدة لأن التذكرة مغلقة",
+          icon: "error",
+          confirmButtonText: "موافق",
+        });
+        return;
+      }
+      Swal.fire({
+        title: "هل تريد إنشاء تذكرة جديدة؟",
+        icon: "warning",
+        confirmButtonText: "موافق",
+        showCancelButton: true,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await axios.post(
+              `${import.meta.env.VITE_URL_BACKEND}/chat/create`,{ticketID:id},
+              {
+                headers: { authorization: token },
+              }
+            
+            );
+            console.log(response.data.chatID);
+            Swal.fire({
+              title: "تم إنشاء التذكرة",
+              icon: "success",
+              confirmButtonText: "موافق",
+            });
+            
+          
+
+          
+            fetchData(currentPage);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      });
+    }
+  };
+
+
 
 
   return (
@@ -199,10 +250,15 @@ export default function SupportPage() {
     تحميل البيانات
   </button>
       </div>
+        
 
   <div className="bg-white p-4 rounded-lg mt-10 shadow">
   {/* ✅ جدول عادي للشاشات الكبيرة */}
   <div className="hidden md:block">
+  {ticket.length > 0 ? (
+  
+
+
     <table className="w-full">
       <thead>
         <tr className="text-[#0061E0] p-2 text-xl">
@@ -229,7 +285,7 @@ export default function SupportPage() {
               </span>
             </td>
             <td className="p-2 text-center">
-              <button className="text-blue-500 hover:underline">
+              <button className="text-blue-500 hover:underline" onClick={() => getTicketByChatId(ticket.chatID ,ticket._id , ticket.status)}>
                 <GrView size={20} />
               </button>
               <span className="text-3xl">/</span>
@@ -243,11 +299,18 @@ export default function SupportPage() {
         ))}
       </tbody>
     </table>
+      ) : (
+        <div className="text-center text-gray-500 text-lg py-4">
+          لا يوجد تذاكر
+        </div>
+      )}
   </div>
 
   {/* ✅ بطاقات (Cards) للشاشات الصغيرة */}
-  <div className="md:hidden">
-    {ticket.map((ticket, index) => (
+
+ <div className="md:hidden">
+  {ticket.length > 0 ? (
+    ticket.map((ticket, index) => (
       <div key={ticket._id} className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold text-gray-800">تذكرة #{index + 1}</h3>
@@ -260,7 +323,7 @@ export default function SupportPage() {
         <p className="text-gray-700"><strong>الموضوع:</strong> {ticket.subject}</p>
 
         <div className="mt-3 flex flex-wrap gap-2">
-          <button className="bg-blue-500 text-white px-3 py-1 rounded-md flex items-center">
+          <button className="bg-blue-500 text-white px-3 py-1 rounded-md flex items-center" onClick={() => getTicketByChatId(ticket.chatID ,ticket._id , ticket.status)}>
             <GrView size={20} className="mr-1" /> عرض
           </button>
           <button onClick={() => handleDelete(ticket._id)} className="bg-red-500 text-white px-3 py-1 rounded-md flex items-center">
@@ -270,8 +333,14 @@ export default function SupportPage() {
           </button>
         </div>
       </div>
-    ))}
-  </div>
+    ))
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد تذاكر
+    </div>
+  )}
+</div>
+
 </div>
 
           <div className="flex justify-between mt-4">

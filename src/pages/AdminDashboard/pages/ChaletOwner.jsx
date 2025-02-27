@@ -457,6 +457,7 @@ export default function ChaletOwner() {
           <div className="bg-white p-4 rounded-lg shadow">
   {/* ✅ جدول عادي على الشاشات المتوسطة والكبيرة */}
   <div className="hidden md:block overflow-x-auto">
+  {owners.length > 0 ? (
     <table className="w-full min-w-[600px]">
       <thead>
         <tr className="text-[#0061E0] p-2 text-xl">
@@ -499,10 +500,18 @@ export default function ChaletOwner() {
         ))}
       </tbody>
     </table>
-  </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد مالكون
+    </div>
+  )}
+</div>
 
   {/* ✅ عرض كـ Cards على الشاشات الصغيرة */}
+  {owners.length > 0 ? (
+
   <div className="md:hidden flex flex-col gap-4">
+
     {owners.map((owner) => (
       <div key={owner._id} className="border rounded-lg shadow p-4 bg-gray-100">
         <div className="flex justify-between items-center">
@@ -532,7 +541,14 @@ export default function ChaletOwner() {
       </div>
     ))}
   </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد مالكون
+    </div>
+  )}
 </div>
+
+
           
           <div className="flex justify-between mt-4">
             <button

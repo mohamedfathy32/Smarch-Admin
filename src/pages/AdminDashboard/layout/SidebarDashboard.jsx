@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-
+import { IoChatbubbleEllipses } from "react-icons/io5";
 export default function SidebarDashboard({ isOpen }) {
     const nav = useNavigate();
     const location = useLocation();
@@ -251,7 +251,7 @@ export default function SidebarDashboard({ isOpen }) {
 
                 <h1>مقاله جديدة </h1>
             </div>
-
+   
 
 
             <div className="mt-auto">
@@ -262,21 +262,3 @@ export default function SidebarDashboard({ isOpen }) {
         </aside>
     );
 }
-
-
-
-{/* <svg 
-     viewBox="0 0 24 24"
-      width="1em"
-      height="1em"
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-    stroke="currentColor" 
-    stroke-width="2" 
-    stroke-linecap="round" 
-    stroke-linejoin="round"
-       className={`text-[#0061E0] ${isExactMatch("/Articles") ? "text-white" : ""}`}
->
-    <path d="M4 4h16v16H4z"/>
-    <path d="M8 10h8M8 14h5M8 6h8"/>
-</svg> */}
