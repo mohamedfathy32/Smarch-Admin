@@ -33,8 +33,6 @@ export default function NotificationDetail() {
 
     const handlePatch = async (status) => {
         const confirmText = status === "active" ? "هل أنت متأكد من الموافقة على الشاليه؟" : "هل أنت متأكد من رفض الشاليه؟";
-        const successText = status === "active" ? "تمت الموافقة على الشاليه بنجاح" : "تم رفض الشاليه بنجاح";
-        const errorText = status === "active" ? "حدث خطأ أثناء الموافقة على الشاليه" : "حدث خطأ أثناء رفض الشاليه";
 
         const result = await Swal.fire({
             title: "تأكيد",
@@ -49,14 +47,14 @@ export default function NotificationDetail() {
             try {
                 const response = await axios.patch(
                     `https://smarch-back-end-nine.vercel.app/chalet/status/${id}`,
-                    { status },
+                    { status},
                     { headers: { Authorization:token } }
                 );
-                console.log(response.data.data);
+                console.log(response.data);
 
                 Swal.fire({
                     title: "ناجح",
-                    text: successText,
+                    text: response.data.message,
                     icon: "success",
                     confirmButtonText: "حسنًا",
                 });
@@ -64,7 +62,7 @@ export default function NotificationDetail() {
                 console.error("Error updating request:", error);
                 Swal.fire({
                     title: "خطأ",
-                    text: errorText,
+                    text: error.response.data.message,
                     icon: "error",
                     confirmButtonText: "حسنًا",
                 });
@@ -75,10 +73,14 @@ export default function NotificationDetail() {
     useEffect(() => {
         const getChalet = async () => {
             try {
+
+
                 const response = await axios.get(
                     `https://smarch-back-end-nine.vercel.app/chalet/${id}`
                 );
-                setChalet(response.data.data);
+                const pendingChalet=response.data.data.pendingUpdates!=null?response.data.data.pendingUpdates:response.data.data
+
+                setChalet(pendingChalet);
                 console.log(response.data);
             } catch (error) {
                 console.error("Error fetching chalet details:", error);
