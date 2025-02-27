@@ -30,12 +30,15 @@ export default function Subscriptions() {
   };
   const handleFilter = async ( page = 1) => {
     setLoadingFilter(true);
+    const activeFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => value !== "")
+    );
     try {
       const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/subscription/filter`, {
         headers: { authorization: token },
         params: {
           page,
-          ...filters,
+          ...activeFilters,
                     
         },
       });
@@ -327,88 +330,114 @@ export default function Subscriptions() {
 
                     </button>
 
-      <div className="bg-white p-4 rounded-lg shadow">
-        <table className="w-full">
-          <thead>
-            <tr className="text-[#0061E0] p-2 text-xl">
-              <th>الحالة</th>
-              <th>الاسم</th>
-              <th>نوع الخطة</th>
-              <th>يبدأ من</th>
-              <th>ينتهي في</th>
-              <th>اجراء</th>
-              <th>عرض التفاصيل</th>
-            </tr>
-          </thead>
-          <tbody>
-            {subscriptions.map((subscription) => (
-              <tr key={subscription._id}>
-                <td className="py-2 px-1 text-center text-lg">
-                  <span className={`border px-3 py-1 text-center rounded-md text-white ${subscription.isActive ? "bg-green-500" : "bg-red-500"}`}>
-                    {subscription.isActive ? "نشط" : "معطل"}
-                  </span>
-                </td>
-                <td className="py-2 px-1 text-center text-lg">{subscription.userId.userName}</td>
-                <td className="py-2 px-1 text-center text-lg">{subscription.packageId.name}</td>
-                <td className="py-2 px-1 text-center text-lg">
-                  {new Date(subscription.startDate).toLocaleDateString()}
-                </td>
-                <td className="py-2 px-1 text-center text-lg">
-                  {new Date(subscription.endDate).toLocaleDateString()}
-                </td>
-                <td className="py-2 px-1 text-center text-lg relative">
-                  <button
-                    onClick={(event) => toggleDropdown(subscription._id, event)}
-                    className="text-blue-500 hover:underline"
-                  >
-                    <FiMoreHorizontal size={20} />
-                  </button>
-                  {activeDropdown === subscription._id && (
-  <div
-    ref={dropdownRef}
-    className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10 transition-all duration-300 ease-in-out transform opacity-100 scale-100"
-  >
-    <button
-      onClick={() => handleExtend(subscription._id)}
-      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-500 transition-colors duration-200"
-    >
-      تمديد
-    </button>
-    <button
+                    <div className="bg-white p-4 rounded-lg shadow">
+  {/* ✅ جدول عادي للشاشات الكبيرة */}
+  {subscriptions.length > 0 ? (
+  <div className="hidden md:block">
+ 
+
     
-      onClick={() => handleDelete(subscription._id)}
-      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-500 transition-colors duration-200"
-    >
-      حذف
-    </button>
-
-    <button
-        disabled={subscription.isActive === false}
-
-      onClick={() => handlePause(subscription._id)}
-      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500 transition-colors duration-200 disabled:opacity-50"
-    >
-      إيقاف
-    </button>
-    <button
-      onClick={() => handleTerminate(subscription._id)}
-      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-700 transition-colors duration-200"
-    >
-      إنهاء الاشتراك
-    </button>
-  </div>
-)}
-                </td>
-                <td className="p-2 text-center">
-                  <button className="text-white bg-gray-500 px-3 py-1 rounded-md">
-                    عرض التفاصيل
+    <table className="w-full">
+      <thead>
+        <tr className="text-[#0061E0] p-2 text-xl">
+          <th>الحالة</th>
+          <th>الاسم</th>
+          <th>نوع الخطة</th>
+          <th>يبدأ من</th>
+          <th>ينتهي في</th>
+          <th>اجراء</th>
+        </tr>
+      </thead>
+      <tbody>
+        {subscriptions.map((subscription) => (
+          <tr key={subscription._id}>
+            <td className="py-2 px-1 text-center text-lg">
+              <span className={`border px-3 py-1 text-center rounded-md text-white ${subscription.isActive ? "bg-green-500" : "bg-red-500"}`}>
+                {subscription.isActive ? "نشط" : "معطل"}
+              </span>
+            </td>
+            <td className="py-2 px-1 text-center text-lg">{subscription.userId.userName}</td>
+            <td className="py-2 px-1 text-center text-lg">{subscription.packageId.name}</td>
+            <td className="py-2 px-1 text-center text-lg">
+              {new Date(subscription.startDate).toLocaleDateString()}
+            </td>
+            <td className="py-2 px-1 text-center text-lg">
+              {new Date(subscription.endDate).toLocaleDateString()}
+            </td>
+            <td className="py-2 px-1 text-center text-lg relative">
+              <button onClick={(event) => toggleDropdown(subscription._id, event)} className="text-blue-500 hover:underline">
+                <FiMoreHorizontal size={20} />
+              </button>
+              {activeDropdown === subscription._id && (
+                <div ref={dropdownRef} className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <button onClick={() => handleExtend(subscription._id)} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-500">
+                    تمديد
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <button onClick={() => handleDelete(subscription._id)} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-500">
+                    حذف
+                  </button>
+                  <button disabled={subscription.isActive === false} onClick={() => handlePause(subscription._id)} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500 disabled:opacity-50">
+                    إيقاف
+                  </button>
+                  <button onClick={() => handleTerminate(subscription._id)} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-700">
+                    إنهاء الاشتراك
+                  </button>
+                </div>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد اشتراكات بعد
+    </div>
+  )}
+
+  {/* ✅ بطاقات (Cards) للشاشات الصغيرة */}
+  {subscriptions.length > 0 ? (
+  <div className="md:hidden">
+    {subscriptions.map((subscription) => (
+      <div key={subscription._id} className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-lg font-semibold text-gray-800">{subscription.userId.userName}</h3>
+          <span className={`px-3 py-1 rounded-md text-white ${subscription.isActive ? "bg-green-500" : "bg-red-500"}`}>
+            {subscription.isActive ? "نشط" : "معطل"}
+          </span>
+        </div>
+        <p className="text-gray-700"><strong>نوع الخطة:</strong> {subscription.packageId.name}</p>
+        <p className="text-gray-700"><strong>يبدأ من:</strong> {new Date(subscription.startDate).toLocaleDateString()}</p>
+        <p className="text-gray-700"><strong>ينتهي في:</strong> {new Date(subscription.endDate).toLocaleDateString()}</p>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button onClick={() => handleExtend(subscription._id)} className="bg-blue-500 text-white px-3 py-1 rounded-md">
+            تمديد
+          </button>
+          <button onClick={() => handleDelete(subscription._id)} className="bg-red-500 text-white px-3 py-1 rounded-md">
+            حذف
+          </button>
+          <button disabled={subscription.isActive === false} onClick={() => handlePause(subscription._id)} className="bg-purple-500 text-white px-3 py-1 rounded-md disabled:opacity-50">
+            إيقاف
+          </button>
+          <button onClick={() => handleTerminate(subscription._id)} className="bg-red-700 text-white px-3 py-1 rounded-md">
+            إنهاء
+          </button>
+        </div>
       </div>
+    ))}
+  </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد اشتراكات بعد
+    </div>
+  )}
+</div>
+
+
+     
+
 
       <div className="flex justify-between mt-4">
         <button

@@ -292,98 +292,90 @@ const handleExportToExcel = () => {
 
 
     <>
-    <div className="flex justify-center gap-10 mb-4" style={{ gap: 900 }}>
-      <button className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition">
-        دعوة مستخدم
-      </button>
-      <button className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition" onClick={openModelRegister}>
-        مستخدم جديد
-      </button>
-    </div>
+    <div className="flex flex-wrap justify-between gap-4 mb-4">
+  <button className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition">
+    دعوة مستخدم
+  </button>
+
+  <button onClick={openModelRegister} className="bg-gray-600 text-white border border-white rounded-xl px-4 py-2 hover:bg-gray-500 transition">
+    مستخدم جديد
+  </button>
+</div>
     <div>
     {modelRegisterOpen && (
-       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-       <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
-         <h2 className="text-xl mb-4">دعوة مستخدم</h2>
-         <form onSubmit={RegisterForm.handleSubmit}>
-           <input
-             placeholder="الاسم"
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
+    <div className="bg-white p-5 rounded-lg shadow-lg w-full max-w-lg">
+      <h2 className="text-xl mb-4">دعوة مستخدم</h2>
+      <form onSubmit={RegisterForm.handleSubmit}>
+        <input
+          placeholder="الاسم"
+          type="text"
+          name="userName"
+          value={RegisterForm.values.userName}
+          onChange={RegisterForm.handleChange}
+          onBlur={RegisterForm.handleBlur}
+          className="border p-2 w-full mb-2"
+        />
+        {RegisterForm.touched.userName && RegisterForm.errors.userName && (
+          <p className="text-red-500">{RegisterForm.errors.userName}</p>
+        )}
 
-             type="text"
-             name="userName"
-             value={RegisterForm.values.userName}
-             onChange={RegisterForm.handleChange}
-             onBlur={RegisterForm.handleBlur}
-             className="border p-2 w-full mb-2"
+        <input
+          placeholder="البريد الالكتروني"
+          type="email"
+          name="email"
+          value={RegisterForm.values.email}
+          onChange={RegisterForm.handleChange}
+          onBlur={RegisterForm.handleBlur}
+          className="border p-2 w-full mb-2"
+        />
+        {RegisterForm.touched.email && RegisterForm.errors.email && (
+          <p className="text-red-500">{RegisterForm.errors.email}</p>
+        )}
 
-           />
-           {RegisterForm.touched.userName && RegisterForm.errors.userName && (
-             <p className="text-red-500">{RegisterForm.errors.userName}</p>
-           )}
+        <input
+          placeholder="رقم الهاتف"
+          type="text"
+          name="phoneNumber"
+          value={RegisterForm.values.phoneNumber}
+          onChange={RegisterForm.handleChange}
+          onBlur={RegisterForm.handleBlur}
+          className="border p-2 w-full mb-2"
+        />
+        {RegisterForm.touched.phoneNumber && RegisterForm.errors.phoneNumber && (
+          <p className="text-red-500">{RegisterForm.errors.phoneNumber}</p>
+        )}
 
+        <input
+          placeholder="كلمة المرور"
+          type="password"
+          name="password"
+          value={RegisterForm.values.password}
+          onChange={RegisterForm.handleChange}
+          onBlur={RegisterForm.handleBlur}
+          className="border p-2 w-full mb-2"
+        />
+        {RegisterForm.touched.password && RegisterForm.errors.password && (
+          <p className="text-red-500">{RegisterForm.errors.password}</p>
+        )}
 
-           <input
-             placeholder="البريد الالكتروني"
-             type="email"
-             name="email"
-             value={RegisterForm.values.email}
-             onChange={RegisterForm.handleChange}
-             onBlur={RegisterForm.handleBlur}
-             className="border p-2 w-full mb-2"
-           />
+        <div className="flex justify-end gap-3 mt-3">
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+            {loading ? <Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "حفظ"}
+          </button>
+          <button onClick={() => setModelRegisterOpen(false)} className="bg-red-500 text-white px-4 py-2 rounded">
+            إغلاق
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
 
-           {RegisterForm.touched.email && RegisterForm.errors.email && (
-             <p className="text-red-500">{RegisterForm.errors.email}</p>
-           )}
-
-
-           <input
-             placeholder="رقم الهاتف"
-             type="text"
-             name="phoneNumber"
-             value={RegisterForm.values.phoneNumber}
-             onChange={RegisterForm.handleChange}
-             onBlur={RegisterForm.handleBlur}
-             className="border p-2 w-full mb-2"
-           />
-
-           {RegisterForm.touched.phoneNumber && RegisterForm.errors.phoneNumber && (
-             <p className="text-red-500">{RegisterForm.errors.phoneNumber}</p>
-           )}
-
-           <input
-             placeholder="كلمة المرور"
-             type="password"
-             name="password"
-             value={RegisterForm.values.password}
-             onChange={RegisterForm.handleChange}
-             onBlur={RegisterForm.handleBlur}
-             className="border p-2 w-full mb-2"
-           />
-
-           {RegisterForm.touched.password && RegisterForm.errors.password && (
-             <p className="text-red-500">{RegisterForm.errors.password}</p>
-           )}
-           
-           
-           <button type="submit" className="bg-blue-500 text-white m-3 px-4 py-2 rounded">
-             {loading ? <Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "حفظ"}
-           </button>
-           <button onClick={() => setModelRegisterOpen(false)} className="ml-2 bg-red-500 text-white px-4 py-2 rounded">
-             إغلاق
-           </button>
-         </form>
-
-         
-       </div>
-       
-     </div>
-     
-   )}
    
 
-    <div className="flex justify-center items-center">
-        <div className="flex items-center gap-4 p-4 rounded-lg w-full max-w-2xl">
+    <div className="flex justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 p-4 rounded-lg w-full max-w-4xl">
         
           <input
             type="text"
@@ -428,7 +420,7 @@ const handleExportToExcel = () => {
 
           
 
-          <button disabled={buttonDisabled} className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-[15vw]" onClick={handleFilter}>
+          <button disabled={buttonDisabled} className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-400 transition w-full sm:w-auto" onClick={handleFilter}>
             {loadingFilter ?<Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "بحث"}
             
           </button>
@@ -436,14 +428,19 @@ const handleExportToExcel = () => {
       </div>
 
     </div>
-    <button
-                        onClick={() => { handleExportToExcel() }}
-                          className="m-5 p-5 text-1xl bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white py-3 rounded-lg"
-                    >
-                        تحميل البيانات
+    <div className="flex justify-start">
+  <button
+    onClick={handleExportToExcel}
+    className="m-5 p-4 text-lg bg-gradient-to-l from-[#48BB78] to-[#1A71FF] text-white rounded-lg w-full sm:w-auto"
+  >
+    تحميل البيانات
+  </button>
+</div>
 
-                    </button>
       <div className="bg-white p-4 rounded-lg shadow">
+        {/* ✅ جدول عادي على الشاشات المتوسطة والكبيرة */}
+        <div className="hidden md:block overflow-x-auto">
+        {users.length > 0 ? (
         <table className="w-full">
           <thead>
             <tr className="text-[#0061E0] p-2 text-xl">
@@ -460,18 +457,18 @@ const handleExportToExcel = () => {
           <tbody>
             
             {users.map((user) => (
-              <tr key={user._id}>
-                <td className="py-2 px-1 text-center text-lg">
+              <tr key={user._id} className="border-b">
+                <td className="py-2 px-1 text-center text-sm sm:text-lg">
                   <span className={`border px-3 py-1 text-center rounded-md text-white ${user.active ? "bg-green-500" : "bg-red-500"}`}>
                     {user.active ? "نشط" : "معطل"}
                   </span>
                 </td>
-                <td className="py-2 px-1 text-center text-lg">
+                <td className="py-2 px-1 text-center text-sm sm:text-lg">
                   {new Date(user.createdAt).getDate()}/{new Date(user.createdAt).getMonth() + 1}/{new Date(user.createdAt).getFullYear()}
                 </td>
-                <td className="py-2 px-1 text-center text-lg">{user.userName}</td>
-                <td className="py-2 px-1 text-center text-lg">{user.email}</td>
-                <td className="py-2 px-1 text-center text-lg">{user.phoneNumber}</td>
+                <td className="py-2 px-1 text-center text-sm sm:text-lg">{user.userName}</td>
+                <td className="py-2 px-1 text-center text-sm sm:text-lg">{user.email}</td>
+                <td className="py-2 px-1 text-center text-sm sm:text-lg">{user.phoneNumber}</td>
                 <td className="p-2 text-center">
                   <button onClick={() => openModal(user)} className="text-blue-500 hover:underline">
                     <FaEdit size={20} />
@@ -486,8 +483,56 @@ const handleExportToExcel = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+          
+          </table>
+
+        ) : (
+          <div className="text-center text-gray-500 text-lg py-4">
+            لا يوجد زائرين بعد
+          </div>
+        )}
+        </div>
+        
       </div>
+        {/* ✅ عرض كـ Cards على الشاشات الصغيرة */}
+        {users.length > 0 ? (
+        <div className="md:hidden flex flex-col gap-4">
+    {users.map((user) => (
+      <div key={user._id} className="border rounded-lg shadow p-4 bg-gray-100">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-gray-800">{user.userName}</h3>
+          <span className={`border px-3 py-1 rounded-md text-white ${user.active ? "bg-green-500" : "bg-red-500"}`}>
+            {user.active ? "نشط" : "معطل"}
+          </span>
+        </div>
+        <p className="text-gray-600 text-sm mt-1"><strong>البريد:</strong> {user.email}</p>
+        <p className="text-gray-600 text-sm"><strong>رقم الهاتف:</strong> {user.phoneNumber}</p>
+        <p className="text-gray-600 text-sm"><strong>تاريخ التسجيل:</strong>  {new Date(user.createdAt).getDate()}/{new Date(user.createdAt).getMonth() + 1}/{new Date(user.createdAt).getFullYear()}</p>
+
+        <div className="flex justify-end gap-3 mt-3">
+          <button onClick={() => openModal(user)} className="text-blue-500 hover:underline">
+            <FaEdit size={20} />
+          </button>
+          <button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 28 28" fill="none">
+              <path d="M8.1665 24.5C7.52484 24.5 6.97573 24.2717 6.51917 23.8152C6.06261 23.3586 5.83395 22.8091 5.83317 22.1667V7H4.6665V4.66667H10.4998V3.5H17.4998V4.66667H23.3332V7H22.1665V22.1667C22.1665 22.8083 21.9382 23.3578 21.4817 23.8152C21.0251 24.2725 20.4756 24.5008 19.8332 24.5H8.1665ZM10.4998 19.8333H12.8332V9.33333H10.4998V19.8333ZM15.1665 19.8333H17.4998V9.33333H15.1665V19.8333Z" fill="#FF0000" />
+            </svg>
+          </button>
+      
+        </div>
+      </div>
+    ))}
+  </div>
+  ) : (
+    <div className="text-center text-gray-500 text-lg py-4">
+      لا يوجد زائرين بعد
+    </div>
+  )}
+
+
+      
+
+
 
       <div className="flex justify-between mt-4">
         <button
@@ -508,55 +553,62 @@ const handleExportToExcel = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
-            <h2 className="text-xl mb-4">تعديل بيانات طالب الحجز</h2>
-            <form onSubmit={formik.handleSubmit}>
-              <input
-                placeholder="الاسم"
-                type="text"
-                name="userName"
-                value={formik.values.userName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="border p-2 w-full mb-2"
-              />
-              {formik.touched.userName && formik.errors.userName && (
-                <p className="text-red-500">{formik.errors.userName}</p>
-              )}
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
+    <div className="bg-white p-5 rounded-lg shadow-lg w-full max-w-lg">
+      <h2 className="text-xl mb-4 text-center">تعديل بيانات طالب الحجز</h2>
+      <form onSubmit={formik.handleSubmit}>
+        <input
+          placeholder="الاسم"
+          type="text"
+          name="userName"
+          value={formik.values.userName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          className="border p-2 w-full mb-2 rounded-md"
+        />
+        {formik.touched.userName && formik.errors.userName && (
+          <p className="text-red-500">{formik.errors.userName}</p>
+        )}
 
-              <input
-                placeholder="البريد الالكتروني"
-                type="email"
-                name="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="border p-2 w-full mb-2"
-              />
-              {formik.touched.email && formik.errors.email && (
-                <p className="text-red-500">{formik.errors.email}</p>
-              )}
+        <input
+          placeholder="البريد الالكتروني"
+          type="email"
+          name="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          className="border p-2 w-full mb-2 rounded-md"
+        />
+        {formik.touched.email && formik.errors.email && (
+          <p className="text-red-500">{formik.errors.email}</p>
+        )}
 
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <div
-                  className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${formik.values.active ? "bg-green-500" : "bg-red-500"}`}
-                  onClick={() => formik.setFieldValue("active", !formik.values.active)}
-                >
-                  <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ${formik.values.active ? "translate-x-6" : ""}`}></div>
-                </div>
-              </label>
-
-              <button type="submit" className="bg-blue-500 text-white m-3 px-4 py-2 rounded">
-                {loading ? <Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "حفظ"}
-              </button>
-              <button onClick={() => setIsModalOpen(false)} className="ml-2 bg-red-500 text-white px-4 py-2 rounded">
-                إغلاق
-              </button>
-            </form>
-          </div>
+        {/* ✅ زر التفعيل/التعطيل متجاوب */}
+        <div className="flex justify-center my-3">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <div
+              className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${formik.values.active ? "bg-green-500" : "bg-red-500"}`}
+              onClick={() => formik.setFieldValue("active", !formik.values.active)}
+            >
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300   ${formik.values.active ? "translate-x-6" : ""}`}></div>
+            </div>
+          </label>
         </div>
-      )}
+
+        {/* ✅ الأزرار متجاوبة */}
+        <div className="flex flex-wrap justify-center gap-3">
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
+            {loading ? <Oval visible={true} height="20" width="20" color="#fff" ariaLabel="oval-loading" /> : "حفظ"}
+          </button>
+          <button onClick={() => setIsModalOpen(false)} className="bg-red-500 text-white px-4 py-2 rounded-md">
+            إغلاق
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
     </>
     )}
     </div>

@@ -16,6 +16,7 @@ import {
   RadialLinearScale,
 
 } from "chart.js";
+import RegisterAdmin from './RegisterAdmin';
 
 
 
@@ -62,6 +63,8 @@ export default function ControlsPage() {
   const itemsPerPage = 5;
 
   const optionsUsers = {
+    responsive: true, // اجعل المخطط يستجيب لحجم الشاشة
+    maintainAspectRatio: false, // السماح بتعديل الحجم يدويًا
     cutout: "70%",
     plugins: {
       legend: {
@@ -78,6 +81,8 @@ export default function ControlsPage() {
     },
   };
   const data = {
+    responsive: true, // اجعل المخطط يستجيب لحجم الشاشة
+    maintainAspectRatio: false, // السماح بتعديل الحجم يدويًا
     labels: [" نشط", " غير نشط "],
     datasets: [
       {
@@ -90,34 +95,6 @@ export default function ControlsPage() {
     ],
   };
 
-  // const data = {
-  //   labels: ["January", "February", "March", "April", "May", "June", "July"],
-  //   datasets: [
-  //     {
-  //       label: "Sales",
-  //       data: [65, 59, 80, 81, 56, 55, 40],
-  //       backgroundColor: [
-  //         "rgba(255, 99, 132, 0.2)",
-  //         "rgba(54, 162, 235, 0.2)",
-  //         "rgba(255, 206, 86, 0.2)",
-  //         "rgba(75, 192, 192, 0.2)",
-  //         "rgba(153, 102, 255, 0.2)",
-  //         "rgba(255, 159, 64, 0.2)",
-  //         "rgba(100, 200, 255, 0.2)",
-  //       ],
-  //       borderColor: [
-  //         "rgba(255, 99, 132, 1)",
-  //         "rgba(54, 162, 235, 1)",
-  //         "rgba(255, 206, 86, 1)",
-  //         "rgba(75, 192, 192, 1)",
-  //         "rgba(153, 102, 255, 1)",
-  //         "rgba(255, 159, 64, 1)",
-  //         "rgba(100, 200, 255, 1)",
-  //       ],
-  //       borderWidth: 1,
-  //     },
-  //   ],
-  // };
 
   const chartData = useMemo(() => {
     const monthlyData = users.reduce((acc, user) => {
@@ -130,6 +107,9 @@ export default function ControlsPage() {
     }, {});
 
     return {
+      responsive: true,
+      maintainAspectRatio: false,
+      
       labels: Object.keys(monthlyData),
       datasets: [
         {
@@ -145,6 +125,7 @@ export default function ControlsPage() {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: "top" },
       title: { display: false, text: "العملاء الجدد" },
@@ -294,9 +275,12 @@ export default function ControlsPage() {
   };
 
   const sizing = {
-    margin: { right: 0 },
+    responsive: true, // اجعل المخطط يستجيب لحجم الشاشة
+    maintainAspectRatio: false, // السماح بتعديل الحجم يدويًا
+    margin: { right: -50 },
     width: 300,
     height: 300,
+   
     legend: { hidden: true },
   };
 
@@ -332,7 +316,7 @@ export default function ControlsPage() {
         <>
 
 
-
+     <RegisterAdmin/>
 
           {/* // ✅ المبيعات */}
           <div className="flex flex-wrap gap-4 justify-evenly">
@@ -403,70 +387,54 @@ export default function ControlsPage() {
 
 
           <div className="flex flex-wrap gap-4 justify-around mt-4">
-            <div>
+  {/* ✅ الرسم البياني الخطي */}
+  <div className="w-full sm:w-[48%] md:w-[30%] flex-shrink-0 ">
+    <LineChart
+      xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+      series={[
+        {
+          data: [2, -5.5, 2, -7.5, 1.5, 6],
+          area: true,
+          baseline: 'min',
+        },
+      ]}
+      width={500}
+      height={300}
+    />
+  </div>
 
+  {/* ✅ مخطط الدائرة (Pie Chart) */}
+  
+  <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4 ">
+   
+    <PieChart
+      series={[
+        {
+          outerRadius: 100,
+          data: locationData,
+          arcLabel: getArcLabel,
+          paddingAngle: 5,
+          cornerRadius: 10,
+          highlightScope: { highlighted: 'item', faded: 'global' },
+        },
+      ]}
+      sx={{
+        [`& .${pieArcLabelClasses.root}`]: {
+          fill: 'white',
+          fontSize: 14,
+          fontWeight: 'bold',
+        },
+      }}
+      {...sizing}
+    />
+  </div>
 
+  {/* ✅ مخطط الدونات (Doughnut Chart) */}
+  <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4">
+    <Doughnut data={data} options={optionsUsers} />
+  </div>
+</div>
 
-              <LineChart
-                xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-                series={[
-                  {
-                    data: [2, -5.5, 2, -7.5, 1.5, 6],
-                    area: true,
-                    baseline: 'min',
-                  },
-                ]}
-                width={500}
-                height={300}
-              />
-
-            </div>
-
-
-            <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%]  flex-shrink-0 border border-[#1A71FF]  ">
-
-              <PieChart
-                series={[
-                  {
-                    outerRadius: 100,
-                    data: locationData,
-                    arcLabel: getArcLabel,
-                    paddingAngle: 5,
-                    cornerRadius: 10,
-                    highlightScope: { highlighted: 'item', faded: 'global' },
-                  },
-                ]}
-                sx={{
-                  [`& .${pieArcLabelClasses.root}`]: {
-                    fill: 'white',
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                  },
-                }}
-                {...sizing}
-              />
-
-
-            </div>
-
-
-            <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%]  flex-shrink-0 border border-[#1A71FF] p-4">
-              <Doughnut data={data} options={optionsUsers} />
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-          </div>
 
 
 
@@ -475,50 +443,49 @@ export default function ControlsPage() {
 
 
           {/* ✅ المستخدمين */}
-          <div className="flex gap-4 p-6 ">
-            {/* ✅ الجدول */}
-            <div className='rounded-lg shadow bg-white' style={{ width: "40%", margin: "0 auto" }}>
-              {chartData ? <Bar data={chartData} options={options} /> : <p>جاري تحميل البيانات...</p>}
-            </div>
+          <div className="flex flex-col md:flex-row gap-4 p-6">
+  {/* ✅ الرسم البياني */}
+  <div className="w-full md:w-2/5 rounded-lg shadow bg-white p-4">
+    {chartData ? <Bar data={chartData} options={options} /> : <p>جاري تحميل البيانات...</p>}
+  </div>
 
-            <div className="w-3/5 max-w-[700px] p-4 rounded-lg shadow bg-white overflow-x-auto">
-              <p className='p-1 text-lg'>اخر الحجوزات</p>
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="text-[#0061E0] p-2 text-sm">
-                    <th>رقم الحجز</th>
-                    <th>اسم العميل</th>
-                    <th>اسم الشالية</th>
-                    <th>تاريخ الحجز</th>
-                    <th>تاريخ المغادرة</th>
-                    <th>مبلغ الحجز</th>
-                    <th>حالة الحجز</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {reserv.map((reserv, index) => (
-                    <tr key={reserv._id}>
-                      <td className="py-2 px-2 text-center text-sm">{index + 1}</td>
-                      {/* <td className="py-2 px-2 text-center text-sm">{reserv.userID.userName}</td> */}
-                      <td className="py-2 px-2 text-center text-sm">{reserv.chaletID.name}</td>
-                      <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkInDate).toLocaleDateString("ar-EG")}</td>
-                      <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkOutDate).toLocaleDateString("ar-EG")}</td>
-                      <td className="py-2 px-2 text-center text-sm">{reserv.totalPrice}</td>
-                      <td className={`py-2 px-2 text-center text-sm rounded-lg text-white
-                  ${reserv.status === "pending" ? "bg-yellow-500" :
-                          reserv.status === "approved" ? "bg-green-500" :
-                            "bg-red-500"}`}>
-                        {reserv.status}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+  {/* ✅ الجدول */}
+  <div className="w-full md:w-3/5 max-w-[700px] p-4 rounded-lg shadow bg-white overflow-x-auto">
+    <p className="p-1 text-lg">اخر الحجوزات</p>
+    <table className="w-full border-collapse">
+      <thead>
+        <tr className="text-[#0061E0] p-2 text-sm">
+          <th>رقم الحجز</th>
+          <th>اسم العميل</th>
+          <th>اسم الشالية</th>
+          <th>تاريخ الحجز</th>
+          <th>تاريخ المغادرة</th>
+          <th>مبلغ الحجز</th>
+          <th>حالة الحجز</th>
+        </tr>
+      </thead>
+      <tbody>
+        {reserv.map((reserv, index) => (
+          <tr key={reserv._id}>
+            <td className="py-2 px-2 text-center text-sm">{index + 1}</td>
+            <td className="py-2 px-2 text-center text-sm">{reserv.ownerID.userName}</td>
+            <td className="py-2 px-2 text-center text-sm">{reserv.chaletID.name}</td>
+            <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkInDate).toLocaleDateString("ar-EG")}</td>
+            <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkOutDate).toLocaleDateString("ar-EG")}</td>
+            <td className="py-2 px-2 text-center text-sm">{reserv.totalPrice}</td>
+            <td className={`py-2 px-2 text-center text-sm rounded-lg text-white
+              ${reserv.status === "pending" ? "bg-yellow-500" :
+                reserv.status === "approved" ? "bg-green-500" :
+                  "bg-red-500"}`}>
+              {reserv.status}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
-            {/* ✅ المحتوى الجانبي */}
-
-          </div>
 
         </>
       )}
