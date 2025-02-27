@@ -9,36 +9,66 @@ export const NotificationContext = createContext();
 // eslint-disable-next-line react/prop-types
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
-  // const location = useLocation();
+  const [numOfNewNotification, setnumOfNewNotification] = useState();
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+
+  const token = localStorage.getItem("tokenAdmin");
+
+  const fetchNotifications = async (isRead = null) => {
+    setLoading(true)
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_URL_BACKEND}/notification/admin`,
+        {
+          headers: { Authorization: token },
+          params: {
+            page: currentPage,
+            ...(isRead !== null && { isRead })
+          }
+        }
+      );
+
+      console.log("Fetched Notifications:", response.data);
+      setNotifications(response.data.data);
+      setTotalPages(response.data.pagination.totalPages)
+
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    } finally {
+      setLoading(false)
+    }
+  };
+
+  const getNewNotifications = async () => {
+    setLoading(true)
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/notification/admin`, {
+        headers: {
+          Authorization: token
+        },
+        params: {
+          isRead: false
+        }
+      })
+
+      setnumOfNewNotification(data.pagination.totalItems)
+      console.log("data:"+data)
+    } catch (error) {
+      console.log(error);
+
+    } finally {
+
+      setLoading(false)
+    }
+  };
+
 
   useEffect(() => {
-    const token = localStorage.getItem("tokenAdmin");
 
-    if (!token ) {
-      console.error("No token found! Redirecting to login...");
-      // window.location.href = "/";
-      // console.log(location.pathname)
-      return;
-    }
-
-    // Fetch notifications
-    const fetchNotifications = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_URL_BACKEND}/notification/admin`,
-          {
-            params:{isRead:true},
-            headers: { Authorization: token },
-          }
-        );
-
-        console.log("Fetched Notifications:", response.data);
-        setNotifications(response.data.data);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    };
-
+    getNewNotifications()
     fetchNotifications();
 
     // Initialize Pusher
@@ -62,58 +92,9 @@ export const NotificationProvider = ({ children }) => {
     };
   }, []);
 
-  // Mark notification as read
-  const markAsRead = async (id) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_URL_BACKEND}/notification/isRead/${id}`,
-        { isRead: true }, 
-        {
-          headers: { Authorization: token },
-        }
-      );
-
-      // Update local state
-      setNotifications((prev) =>
-        prev.map((notif) =>
-          notif._id === id ? { ...notif, isRead: true } : notif
-        )
-      );
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-    }
-  };
-
-  // Mark notification as unread
-  const markUnRead = async (id) => {
-    const token = localStorage.getItem("tokenAdmin");
-    if (!token) return;
-
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_URL_BACKEND}/notification/isRead/${id}`,
-        { isRead: false }, 
-        {
-          headers: { Authorization: token },
-        }
-      );
-
-      // Update local state
-      setNotifications((prev) =>
-        prev.map((notif) =>
-          notif._id === id ? { ...notif, isRead: false } : notif
-        )
-      );
-    } catch (error) {
-      console.error("Error marking notification as unread:", error);
-    }
-  };
 
   return (
-    <NotificationContext.Provider value={{ notifications, markAsRead, markUnRead }}>
+    <NotificationContext.Provider value={{ notifications, setCurrentPage, totalPages, currentPage, loading, fetchNotifications, numOfNewNotification }}>
       {children}
     </NotificationContext.Provider>
   );

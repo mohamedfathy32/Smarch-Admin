@@ -10,9 +10,8 @@ import NotificationModal from './../pages/NotificationModal'; // Import the moda
 export default function HeaderDashboard() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-    const { notifications } = useContext(NotificationContext);
-    
-    const unreadCount = notifications.filter(notif => !notif.isRead).length;
+    const { numOfNewNotification } = useContext(NotificationContext);
+
     const nav = useNavigate();
 
     const toggleMenu = () => {
@@ -43,11 +42,11 @@ export default function HeaderDashboard() {
             <div className='flex flex-row gap-5 ms-4 relative'>
                 <button onClick={toggleNotifications} className="relative">
                     <IoMdNotifications size={22} className='text-blue-700' />
-                    {unreadCount > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                            {unreadCount}
-                        </span>
-                    )}
+
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                        {numOfNewNotification}
+                    </span>
+
                 </button>
 
                 <button>
