@@ -27,6 +27,7 @@ export const NotificationProvider = ({ children }) => {
         const response = await axios.get(
           `${import.meta.env.VITE_URL_BACKEND}/notification/admin`,
           {
+            params:{isRead:true},
             headers: { Authorization: token },
           }
         );
