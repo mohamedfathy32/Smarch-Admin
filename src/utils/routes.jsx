@@ -41,8 +41,8 @@ export const router = createBrowserRouter([
       { path: "Articles", element: <Articles /> },
       { path: "ChatAdmin/:id", element: <ChatAdmin /> },
 
+      { path: "notification/:id", element: <NotificationDetail /> },
     ]
 
   },
-  { path: "notification/:id", element: <NotificationDetail /> },
 ]);

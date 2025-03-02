@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import Pusher from "pusher-js";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 // Create Context
 export const NotificationContext = createContext();
@@ -9,13 +10,20 @@ export const NotificationContext = createContext();
 // eslint-disable-next-line react/prop-types
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
+  const [readNotifications, setreadNotifications] = useState([]);
+  const [newNotifications, setNewNotifications] = useState([]);
   const [numOfNewNotification, setnumOfNewNotification] = useState();
+  const [numOfReadNotification, setNumOfReadNotification] = useState();
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
 
 
   const token = localStorage.getItem("tokenAdmin");
+
+
+
+
 
   const fetchNotifications = async (isRead = null) => {
     setLoading(true)
@@ -50,12 +58,42 @@ export const NotificationProvider = ({ children }) => {
           Authorization: token
         },
         params: {
+          page: 1,
+          limit: 1000,
           isRead: false
         }
       })
-
+      setNewNotifications(data.data)
       setnumOfNewNotification(data.pagination.totalItems)
-      console.log("data:"+data)
+      setTotalPages(data.pagination.totalPages)
+      console.log("data:" + data)
+    } catch (error) {
+      console.log(error);
+
+    } finally {
+
+      setLoading(false)
+    }
+  };
+
+
+  const getReadNotifications = async () => {
+    setLoading(true)
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/notification/admin`, {
+        headers: {
+          Authorization: token
+        },
+        params: {
+          page: 1,
+          limit: 1000,
+          isRead: true
+        }
+      })
+      setreadNotifications(data.data)
+      setNumOfReadNotification(data.pagination.totalItems)
+      setTotalPages(data.pagination.totalPages)
+      console.log("data:" + data)
     } catch (error) {
       console.log(error);
 
@@ -70,6 +108,7 @@ export const NotificationProvider = ({ children }) => {
 
     getNewNotifications()
     fetchNotifications();
+    getReadNotifications();
 
     // Initialize Pusher
     const pusher = new Pusher("e2d89305666fadb1029b", {
@@ -82,6 +121,8 @@ export const NotificationProvider = ({ children }) => {
     channel.bind("newNotification", (data) => {
       console.log("New notification received:", data);
       setNotifications((prev) => [data, ...prev]);
+      setnumOfNewNotification(prev => prev + 1)
+
     });
 
     // Cleanup function
@@ -93,8 +134,43 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
 
+
+  const toggleReadStatus = async (id, all) => {
+
+
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_URL_BACKEND}/notification/isRead/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      fetchNotifications()
+      getNewNotifications(all)
+      setCurrentPage(currentPage);
+
+    } catch (error) {
+      Swal.fire({
+        title: "errors",
+        text: error.response.data.massage,
+        icon: "error",
+        confirmButtonText: "موافق",
+      });
+      console.error("Failed to update notification status", error);
+    }
+
+  };
+
+
+
   return (
-    <NotificationContext.Provider value={{ notifications, setCurrentPage, totalPages, currentPage, loading, fetchNotifications, numOfNewNotification }}>
+    <NotificationContext.Provider value={{
+      notifications, setCurrentPage, totalPages, currentPage, loading, fetchNotifications,
+      numOfNewNotification, toggleReadStatus, numOfReadNotification, readNotifications, newNotifications, getReadNotifications, getNewNotifications
+    }}>
       {children}
     </NotificationContext.Provider>
   );

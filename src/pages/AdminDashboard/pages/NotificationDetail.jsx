@@ -12,6 +12,7 @@ export default function NotificationDetail() {
     // const { notifications, markAsRead } = useContext(NotificationContext);
     // const navigate = useNavigate();
     const [chalet, setChalet] = useState([]);
+    const [forUpdate, setForUpdate] = useState(null);
     const [loading, setLoading] = useState(true);
     const [openSection, setOpenSection] = useState("المرافق");
     const token = localStorage.getItem("tokenAdmin");
@@ -47,8 +48,8 @@ export default function NotificationDetail() {
             try {
                 const response = await axios.patch(
                     `https://smarch-back-end-nine.vercel.app/chalet/status/${id}`,
-                    { status},
-                    { headers: { Authorization:token } }
+                    { status },
+                    { headers: { Authorization: token } }
                 );
                 console.log(response.data);
 
@@ -70,27 +71,69 @@ export default function NotificationDetail() {
         }
     };
 
-    useEffect(() => {
-        const getChalet = async () => {
+
+
+    const confirmUpdate = async (status) => {
+        const confirmText = status === "active" ? "هل أنت متأكد من الموافقة على التعديلات ؟" : "هل أنت متأكد من رفض التعديلات ؟";
+
+        const result = await Swal.fire({
+            title: "تأكيد",
+            text: confirmText,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "نعم",
+            cancelButtonText: "إلغاء",
+        });
+
+        if (result.isConfirmed) {
             try {
-
-
-                const response = await axios.get(
-                    `https://smarch-back-end-nine.vercel.app/chalet/${id}`
+                const response = await axios.patch(
+                    `https://smarch-back-end-nine.vercel.app/chalet/permissionUpdate/${id}`,
+                    { status },
+                    { headers: { Authorization: token } }
                 );
-                const pendingChalet=response.data.data.pendingUpdates!=null?response.data.data.pendingUpdates:response.data.data
-
-                setChalet(pendingChalet);
                 console.log(response.data);
+                getChalet();
+                Swal.fire({
+                    title: "ناجح",
+                    text: response.data.message,
+                    icon: "success",
+                    confirmButtonText: "حسنًا",
+                });
             } catch (error) {
-                console.error("Error fetching chalet details:", error);
-            } finally {
-                setLoading(false);
+                console.error("Error updating request:", error);
+                Swal.fire({
+                    title: "خطأ",
+                    text: error.response.data.message,
+                    icon: "error",
+                    confirmButtonText: "حسنًا",
+                });
             }
-        };
+        }
+    };
+
+    const getChalet = async () => {
+        try {
+
+
+            const response = await axios.get(
+                `https://smarch-back-end-nine.vercel.app/chalet/${id}`
+            );
+            const pendingChalet = response.data.data.pendingUpdates != null ? response.data.data.pendingUpdates : response.data.data
+            response.data.data.pendingUpdates != null ? setForUpdate(true) : setForUpdate(false);
+
+            setChalet(pendingChalet);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching chalet details:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
 
         getChalet();
-    }, [id]);
+    }, [chalet.status]);
     if (loading) {
         return <div className="text-center">Loading...</div>;
     }
@@ -99,22 +142,50 @@ export default function NotificationDetail() {
     return (
         <>
             <div className="my-10 mx-4 sm:mx-8">
+                {forUpdate ?
 
-                <div className="my-6 sm:my-8 px-4 sm:px-8 flex justify-center gap-5 ">
-                    <button
-                        onClick={()=>handlePatch("active")}
-                        className="flex items-center gap-5 bg-green-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
-                    >
-                        تأكيد الشاليه
-                    </button>
-                    <button
-                        onClick={()=>handlePatch("rejected")}
-                        className="flex items-center gap-5 bg-red-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
-                    >
-                        رفض الشاليه
-                    </button>
-                </div>
+                    <div className="my-6 sm:my-8 px-4 sm:px-8 flex justify-center gap-5 ">
+                        {chalet.status == 'active' ? <h1 className="text-3xl font-semibold"> تمت الموافقه على التعديلات من قبل  </h1> : chalet.status == 'rejected' ? <h1 className="text-3xl font-semibold"> تم رفض  التعديلات من قبل  </h1> :
+                            <>
+                                <button
+                                    onClick={() => confirmUpdate("active")}
+                                    className="flex items-center gap-5 bg-green-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
+                                >
+                                    الموافقه على التعديلات
 
+                                </button>
+                                <button
+                                    onClick={() => confirmUpdate("rejected")}
+                                    className="flex items-center gap-5 bg-red-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
+                                >
+                                    عدم الموافقه على التعديلات
+
+                                </button>
+                            </>
+                        }
+
+                    </div> : (
+                        <div className="my-6 sm:my-8 px-4 sm:px-8 flex justify-center gap-5 ">
+                            {chalet.status == 'active' ? <h1 className="text-3xl font-semibold"> تمت الموافقه على الشاليه من قبل  </h1> : chalet.status == 'rejected' ? <h1 className="text-3xl font-semibold"> تم رفض  الشاليه من قبل  </h1> :
+                                <>
+                                    <button
+                                        onClick={() => handlePatch("active")}
+                                        className="flex items-center gap-5 bg-green-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
+                                    >
+                                        تأكيد الشاليه
+                                    </button>
+                                    <button
+                                        onClick={() => handlePatch("rejected")}
+                                        className="flex items-center gap-5 bg-red-600 text-white py-2 px-6 sm:px-16 rounded-lg text-sm sm:text-2xl font-semibold"
+                                    >
+                                        رفض الشاليه
+
+                                    </button>
+                                </>
+                            }
+                        </div>
+
+                    )}
 
                 <div className="bg-blue-50 py-10 flex flex-col md:flex-row items-center justify-between space-y-8 md:space-y-0 md:space-x-8">
 
@@ -292,7 +363,7 @@ export default function NotificationDetail() {
                 </div>
 
 
-            </div>
+            </div >
 
 
 

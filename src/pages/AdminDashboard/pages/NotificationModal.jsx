@@ -1,60 +1,56 @@
-import React, { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { NotificationContext } from "../../../../Context/NotificationContext";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../../components/Pagination";
 
+// eslint-disable-next-line react/prop-types
 export default function NotificationModal({ onClose }) {
-  const { notifications, markAsRead } = useContext(NotificationContext);
+  const { numOfNewNotification, numOfReadNotification, readNotifications, newNotifications, getNewNotifications, getReadNotifications , toggleReadStatus } = useContext(NotificationContext);
   const navigate = useNavigate();
 
-  // تصنيف الإشعارات إلى غير مقروءة ومقروءة
-  const unreadNotifications = notifications.filter((notif) => !notif.isRead);
-  const readNotifications = notifications.filter((notif) => notif.isRead);
-
-  // حالة التحكم في التبويبات
   const [activeTab, setActiveTab] = useState("unread");
+  const [displayedNotifications, setDisplayedNotifications] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // عدد الإشعارات لكل صفحة
 
-  // حالة الترقيم لكل قائمة
-  const [currentPageUnread, setCurrentPageUnread] = useState(1);
-  const [currentPageRead, setCurrentPageRead] = useState(1);
-  const notificationsPerPage = 5;
+  useEffect(() => {
+    // اجلب كل الإشعارات دفعة واحدة عند فتح المودال
+    getNewNotifications();
+    getReadNotifications();
+  }, []);
 
-  // حساب الإشعارات المعروضة حسب الصفحة
-  const paginate = (data, currentPage) => {
-    const start = (currentPage - 1) * notificationsPerPage;
-    return data.slice(start, start + notificationsPerPage);
-  };
+  useEffect(() => {
+    const activeNotifications = activeTab === "unread" ? newNotifications : readNotifications;
 
-  const paginatedUnread = paginate(unreadNotifications, currentPageUnread);
-  const paginatedRead = paginate(readNotifications, currentPageRead);
+    if (activeNotifications.length > 0) {
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      setDisplayedNotifications(activeNotifications.slice(start, end));
+    } else {
+      setDisplayedNotifications([]);
+    }
+  }, [activeTab, newNotifications, readNotifications, currentPage]);
 
-  // التبديل بين التبويبات
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setCurrentPageUnread(1);
-    setCurrentPageRead(1);
+    setCurrentPage(1); // إعادة تعيين الصفحة عند تغيير التبويبة
   };
 
-  // التنقل بين الصفحات
-  const changePage = (type, direction) => {
-    if (type === "unread") {
-      setCurrentPageUnread((prev) =>
-        direction === "next"
-          ? Math.min(prev + 1, Math.ceil(unreadNotifications.length / notificationsPerPage))
-          : Math.max(prev - 1, 1)
-      );
-    } else {
-      setCurrentPageRead((prev) =>
-        direction === "next"
-          ? Math.min(prev + 1, Math.ceil(readNotifications.length / notificationsPerPage))
-          : Math.max(prev - 1, 1)
-      );
+  const handleNotificationClick = (notif) => {
+    toggleReadStatus(notif._id,false);
+    switch (notif.type) {
+      case "Ticket":
+        navigate("/dashboard/Support");
+        break;
+      case "Chalet":
+        navigate(`/dashboard/notification/${notif.relatedEntityId}`);
+        break;
+
+      default:
+        navigate(`/`);
     }
-  };
-
-  // التنقل إلى صفحة التفاصيل
-  const handleNotificationClick = (id) => {
-    navigate(`/notification/${id}`);
     onClose();
   };
 
@@ -77,43 +73,37 @@ export default function NotificationModal({ onClose }) {
         {/* التبويبات */}
         <div className="flex justify-center mt-4 border-b pb-2">
           <button
-            className={`px-4 py-2 text-sm font-semibold ${
-              activeTab === "unread"
-                ? "border-b-2 border-blue-500 text-blue-600"
-                : "text-gray-600"
-            }`}
+            className={`px-4 py-2 text-sm font-semibold ${activeTab === "unread"
+              ? "border-b-2 border-blue-500 text-blue-600"
+              : "text-gray-600"
+              }`}
             onClick={() => handleTabChange("unread")}
           >
-            غير مقروءة ({unreadNotifications.length})
+            غير مقروءة ({numOfNewNotification})
           </button>
           <button
-            className={`px-4 py-2 text-sm font-semibold ml-4 ${
-              activeTab === "read"
-                ? "border-b-2 border-blue-500 text-blue-600"
-                : "text-gray-600"
-            }`}
+            className={`px-4 py-2 text-sm font-semibold ml-4 ${activeTab === "read"
+              ? "border-b-2 border-blue-500 text-blue-600"
+              : "text-gray-600"
+              }`}
             onClick={() => handleTabChange("read")}
           >
-            مقروءة ({readNotifications.length})
+            مقروءة ({numOfReadNotification})
           </button>
         </div>
 
         {/* عرض الإشعارات حسب التبويب المختار */}
         <div className="mt-4 space-y-4">
-          {activeTab === "unread" && paginatedUnread.length === 0 && (
-            <p className="text-center text-gray-500">لا توجد إشعارات غير مقروءة</p>
-          )}
-          {activeTab === "read" && paginatedRead.length === 0 && (
-            <p className="text-center text-gray-500">لا توجد إشعارات مقروءة</p>
+          {displayedNotifications.length === 0 && (
+            <p className="text-center text-gray-500">لا توجد إشعارات</p>
           )}
 
-          {(activeTab === "unread" ? paginatedUnread : paginatedRead).map((notif) => (
+          {displayedNotifications.map((notif) => (
             <div
               key={notif._id}
-              onClick={() => handleNotificationClick(notif.relatedEntityId)}
-              className={`p-3 border rounded-md shadow-sm cursor-pointer transition ${
-                activeTab === "unread" ? "bg-blue-50 border-blue-400" : "bg-gray-100"
-              }`}
+              onClick={() => handleNotificationClick(notif)}
+              className={`p-3 border rounded-md shadow-sm cursor-pointer transition ${activeTab === "unread" ? "bg-blue-50 border-blue-400" : "bg-gray-100"
+                }`}
             >
               <p className={`text-sm ${activeTab === "unread" ? "text-blue-700 font-semibold" : "text-gray-600"}`}>
                 {notif.text}
@@ -123,43 +113,11 @@ export default function NotificationModal({ onClose }) {
           ))}
         </div>
 
-        {/* أزرار الترقيم */}
-        {(activeTab === "unread" ? unreadNotifications : readNotifications).length > notificationsPerPage && (
-          <div className="flex justify-between items-center mt-4">
-            <button
-              onClick={() => changePage(activeTab, "prev")}
-              disabled={activeTab === "unread" ? currentPageUnread === 1 : currentPageRead === 1}
-              className={`px-4 py-2 rounded-md text-sm font-semibold ${
-                (activeTab === "unread" ? currentPageUnread === 1 : currentPageRead === 1)
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-            >
-              السابق
-            </button>
-            <span className="text-gray-700">
-              صفحة {activeTab === "unread" ? currentPageUnread : currentPageRead} من{" "}
-              {Math.ceil((activeTab === "unread" ? unreadNotifications.length : readNotifications.length) / notificationsPerPage)}
-            </span>
-            <button
-              onClick={() => changePage(activeTab, "next")}
-              disabled={
-                activeTab === "unread"
-                  ? currentPageUnread >= Math.ceil(unreadNotifications.length / notificationsPerPage)
-                  : currentPageRead >= Math.ceil(readNotifications.length / notificationsPerPage)
-              }
-              className={`px-4 py-2 rounded-md text-sm font-semibold ${
-                (activeTab === "unread"
-                  ? currentPageUnread >= Math.ceil(unreadNotifications.length / notificationsPerPage)
-                  : currentPageRead >= Math.ceil(readNotifications.length / notificationsPerPage))
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-            >
-              التالي
-            </button>
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={Math.ceil((activeTab === "unread" ? newNotifications.length : readNotifications.length) / itemsPerPage)}
+        />
       </div>
     </div>
   );

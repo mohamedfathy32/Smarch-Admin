@@ -6,7 +6,7 @@ import Pagination from "../../../../../components/Pagination";
 
 export default function AllNotification() {
   const { notifications, currentPage, loading,
-    fetchNotifications, totalPages, setCurrentPage
+    fetchNotifications, totalPages, setCurrentPage , toggleReadStatus
   } = useContext(NotificationContext)
 
   useEffect(() => {
@@ -28,12 +28,13 @@ export default function AllNotification() {
 
   return (
     <>
+    {console.log(notifications)}
       {notifications?.map((notif, index) => (
         <div key={index} className="flex justify-center mt-7 px-4 sm:px-6 lg:px-8">
           <NotificationTemp
             notification={notif}
             formatDate={formatDate}
-            // toggleReadStatus={toggleReadStatus}
+            toggleReadStatus={toggleReadStatus}
             all={false}
           />
         </div>

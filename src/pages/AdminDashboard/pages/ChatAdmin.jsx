@@ -124,7 +124,7 @@ useEffect(() => {
                             <Avatar>{isAdmin ? "A" : "O"}</Avatar>
                         </Stack>
                         <div className={`${isAdmin ? "text-left" : "text-right"}`}>
-                        {isAdmin? <p>{decodedToken.username}</p> : <p>{ticket?.ticketID.sender.userName}</p>}
+                        {isAdmin? <p className='text-right'>{decodedToken.username}</p> : <p className='text-end'>{ticket?.ticketID.sender.userName}</p>}
                         
                         
                             

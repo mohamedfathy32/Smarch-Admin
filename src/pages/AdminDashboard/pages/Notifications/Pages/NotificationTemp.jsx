@@ -2,19 +2,38 @@
 import { MdMarkEmailRead } from "react-icons/md";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function NotificationTemp({ notification, formatDate, toggleReadStatus, all = null }) {
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate()
+    const handleNavigate = (id, relatedId, all) => {
+        toggleReadStatus(id, all);
+        switch (notification.type) {
+            case "Ticket":
+                navigate("/dashboard/Support");
+                break;
+            case "Chalet":
+                navigate(`/dashboard/notification/${relatedId}`);
+                break;
+
+            default:
+                navigate(`/`);
+        }
+    };
+
 
     const handleMarkAsRead = async (e) => {
         e.stopPropagation();
-        setLoading(true); 
+        setLoading(true);
+        console.log(notification._id)
+        console.log(all)
         await toggleReadStatus(notification._id, all);
-        setLoading(false); 
+        setLoading(false);
     };
     return (
         <div className={`flex w-full justify-between max-w-3xl border rounded-lg py-2 px-3 shadow-md transition-all duration-300  border-blue-400 cursor-pointer ${notification.isRead ? '' : 'bg-blue-100'}`}
-        >
+            onClick={() => { handleNavigate(notification._id, notification.relatedEntityId, all) }}>
             <div className="w-8/12 p-4 sm:p-5 rounded-t sm:rounded-l sm:rounded-tr-none">
                 <p className="text-xl sm:text-2xl text-blue-700 font-semibold">{notification.title}</p>
                 <p className="text-base sm:text-lg text-blue-700 mt-2">{notification.text}</p>

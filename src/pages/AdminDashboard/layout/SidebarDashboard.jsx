@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { IoChatbubbleEllipses } from "react-icons/io5";
+import { useContext, useState } from "react";
+import { NotificationContext } from "../../../../Context/NotificationContext";
 export default function SidebarDashboard({ isOpen }) {
     const nav = useNavigate();
     const location = useLocation();
 
     const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const { numOfNewNotification } = useContext(NotificationContext);
 
     const isExactMatch = (path) => location.pathname === path;
     const isPartialMatch = (path) => location.pathname.includes(path);
@@ -196,6 +197,8 @@ export default function SidebarDashboard({ isOpen }) {
 
 
                 <h1>الاشعارات </h1>
+                <p className="rounded-full bg-red-700 w-8 h-8 text-center text-xl"> {numOfNewNotification} </p>
+
             </div>
 
 
@@ -251,7 +254,7 @@ export default function SidebarDashboard({ isOpen }) {
 
                 <h1>مقاله جديدة </h1>
             </div>
-   
+
 
 
             <div className="mt-auto">
