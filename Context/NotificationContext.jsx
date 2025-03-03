@@ -16,6 +16,8 @@ export const NotificationProvider = ({ children }) => {
   const [numOfReadNotification, setNumOfReadNotification] = useState();
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1);
+  const [totalNewPagesModel, setTotalNewPagesModel] = useState(1);
+  const [totalReadPagesModel, setTotalReadPagesModel] = useState(1);
   const [loading, setLoading] = useState(false);
 
 
@@ -58,15 +60,15 @@ export const NotificationProvider = ({ children }) => {
           Authorization: token
         },
         params: {
-          page: 1,
-          limit: 1000,
+          page: currentPage,
+          limit: 5,
           isRead: false
         }
       })
       setNewNotifications(data.data)
       setnumOfNewNotification(data.pagination.totalItems)
-      setTotalPages(data.pagination.totalPages)
-      console.log("data:" + data)
+      setTotalNewPagesModel(data.pagination.totalPages)
+
     } catch (error) {
       console.log(error);
 
@@ -85,15 +87,14 @@ export const NotificationProvider = ({ children }) => {
           Authorization: token
         },
         params: {
-          page: 1,
-          limit: 1000,
+          page: currentPage,
+          limit: 5,
           isRead: true
         }
       })
       setreadNotifications(data.data)
       setNumOfReadNotification(data.pagination.totalItems)
-      setTotalPages(data.pagination.totalPages)
-      console.log("data:" + data)
+      setTotalReadPagesModel(data.pagination.totalPages)
     } catch (error) {
       console.log(error);
 
@@ -169,7 +170,8 @@ export const NotificationProvider = ({ children }) => {
   return (
     <NotificationContext.Provider value={{
       notifications, setCurrentPage, totalPages, currentPage, loading, fetchNotifications,
-      numOfNewNotification, toggleReadStatus, numOfReadNotification, readNotifications, newNotifications, getReadNotifications, getNewNotifications
+      numOfNewNotification, toggleReadStatus, numOfReadNotification, readNotifications, newNotifications,
+      getReadNotifications, getNewNotifications, totalNewPagesModel, totalReadPagesModel 
     }}>
       {children}
     </NotificationContext.Provider>
