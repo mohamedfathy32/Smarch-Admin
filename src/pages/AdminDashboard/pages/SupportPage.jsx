@@ -5,10 +5,11 @@ import axios from 'axios';
 import { GrView } from "react-icons/gr";
 import Swal from 'sweetalert2';
 import { Hourglass } from 'react-loader-spinner';
-
+import { FaRocketchat } from "react-icons/fa";
 import * as XLSX from "xlsx";
-
+import Pagination from '../../../components/Pagination';
 import { useNavigate } from "react-router-dom";
+
 export default function SupportPage() {
 
   const token = localStorage.getItem("tokenAdmin");
@@ -33,7 +34,7 @@ export default function SupportPage() {
         headers: { authorization: token },
         params: { page }
       });
-      console.log(response.data.data);
+      console.log(response.data);
       setTicket(response.data.data);
       setTotalPendingTickets(response.data.numOfTicketsPending)
       setTotalClosedTickets(response.data.numOfTicketsClosed)
@@ -49,6 +50,8 @@ export default function SupportPage() {
       console.log(error);
 
 
+    } finally {
+      setLoadingPage(false);
     }
 
   };
@@ -158,6 +161,42 @@ export default function SupportPage() {
       });
     }
   };
+  const updateStatus = async (ticketId, newStatus) => {
+
+    console.log("id", ticketId);
+    try {
+        await axios.patch(`${import.meta.env.VITE_URL_BACKEND}/ticket/updateStatus/${ticketId}`, { status: newStatus }, {
+            headers: {
+                'Authorization': token
+            }
+        });
+        fetchData(currentPage);
+    } catch (err) {
+        setError(err.message);
+    }
+};
+const handleCloseConfirmation = (ticketId, currentStatus) => {
+  Swal.fire({
+      title: currentStatus === "open" ? 'هل تريد غلق هذه الحالة؟' : 'هل تريد فتح هذه الحالة؟',
+      text: "لا يمكنك التراجع عن هذا!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: currentStatus === "open" ? 'نعم، أغلقها!' : 'نعم، افتحها!',
+      cancelButtonText: 'إلغاء'
+  }).then((result) => {
+      if (result.isConfirmed) {
+          const newStatus = currentStatus === "open" ? "closed" : "open";
+          updateStatus(ticketId, newStatus);
+          Swal.fire(
+              newStatus === "open" ? 'تم الفتح!' : 'تم الغلق!',
+              newStatus === "open" ? 'تم فتح الحالة بنجاح.' : 'تم غلق الحالة بنجاح.',
+              'success'
+          );
+      }
+  });
+};
 
 
 
@@ -189,7 +228,7 @@ export default function SupportPage() {
             <div className="flex justify-between items-center p-4 rounded-lg shadow w-full sm:w-[48%] md:w-[22%] h-[150px] flex-shrink-0 border border-[#1A71FF]">
               <div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-3"> عدد التذاكر</h3>
-                <p className="text-2xl font-semibold text-[#101828]">{totalTickets}</p>
+                <p className="text-2xl font-semibold text-[#101828]">{totalTickets }</p>
               </div>
 
 
@@ -266,7 +305,7 @@ export default function SupportPage() {
           <th>اسم المستخدم</th>
           <th>تاريخ الإرسال</th>
           <th>الموضوع</th>
-          <th>الحالة</th>
+          <th>تغيير هذه الحاله</th>
           <th>خيارات</th>
         </tr>
       </thead>
@@ -279,14 +318,25 @@ export default function SupportPage() {
               {new Date(ticket.createdAt).toLocaleDateString("ar-EG")}
             </td>
             <td className="py-2 px-1 text-center text-lg">{ticket.subject}</td>
-            <td className="py-2 px-1 text-center text-lg">
-              <span className={`border px-3 py-1 text-center rounded-md text-white ${ticket.status === "pending" ? "bg-yellow-500" : ticket.status === "closed" ? "bg-red-500" : "bg-green-500"}`}>
-                {ticket.status}
-              </span>
-            </td>
+           
+            <td className="py-5 px-2 text-center text-lg">
+    <button 
+        onClick={() => handleCloseConfirmation(ticket._id, ticket.status)} 
+        className={`px-4 py-2 rounded-lg ${
+          ticket.status === "open" ? "bg-green-500 text-white" :
+          ticket.status === "closed" ? "bg-red-500 text-white" :
+          "bg-yellow-500 text-black"
+        }`}
+    >
+      {ticket.status === "open" ? "🏁 مفتوح" : 
+        ticket.status === "closed" ? "🔒 مغلق" : 
+        "⏳ قيد الانتظار"}
+    </button>
+</td>
+
             <td className="p-2 text-center">
               <button className="text-blue-500 hover:underline" onClick={() => getTicketByChatId(ticket.chatID ,ticket._id , ticket.status)}>
-                <GrView size={20} />
+                <FaRocketchat size={20} />
               </button>
               <span className="text-3xl">/</span>
               <button onClick={() => handleDelete(ticket._id)}>
@@ -314,8 +364,15 @@ export default function SupportPage() {
       <div key={ticket._id} className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold text-gray-800">تذكرة #{index + 1}</h3>
-          <span className={`px-3 py-1 rounded-md text-white ${ticket.status === "pending" ? "bg-yellow-500" : ticket.status === "closed" ? "bg-red-500" : "bg-green-500"}`}>
-            {ticket.status}
+          <span onClick={() => handleCloseConfirmation(ticket._id, ticket.status)} 
+        className={`px-4 py-2 rounded-lg cursor-pointer ${
+          ticket.status === "open" ? "bg-green-500 text-white" :
+          ticket.status === "closed" ? "bg-red-500 text-white" :
+          "bg-yellow-500 text-black"
+        }`}>
+            {ticket.status === "open" ? "🏁 مفتوح" : 
+        ticket.status === "closed" ? "🔒 مغلق" : 
+        "⏳ قيد الانتظار"}
           </span>
         </div>
         <p className="text-gray-700"><strong>المستخدم:</strong> {ticket.sender.userName}</p>
@@ -324,7 +381,7 @@ export default function SupportPage() {
 
         <div className="mt-3 flex flex-wrap gap-2">
           <button className="bg-blue-500 text-white px-3 py-1 rounded-md flex items-center" onClick={() => getTicketByChatId(ticket.chatID ,ticket._id , ticket.status)}>
-            <GrView size={20} className="mr-1" /> عرض
+            <FaRocketchat size={20} className="mr-1" /> عرض
           </button>
           <button onClick={() => handleDelete(ticket._id)} className="bg-red-500 text-white px-3 py-1 rounded-md flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 28 28" fill="none" className="mr-1">
@@ -343,23 +400,9 @@ export default function SupportPage() {
 
 </div>
 
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            >
-              الصفحة السابقة
-            </button>
-            <span>الصفحة {currentPage} من {totalPages}</span>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            >
-              الصفحة التالية
-            </button>
-          </div>
+<Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
+         
+
 
 
 

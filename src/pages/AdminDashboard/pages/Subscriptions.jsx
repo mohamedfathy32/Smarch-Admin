@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import { Hourglass } from 'react-loader-spinner';
 import * as XLSX from "xlsx";
 import { Oval } from 'react-loader-spinner';
-
+import Pagination from '../../../components/Pagination';
 export default function Subscriptions() {
   const [subscriptions, setSubscriptions] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -59,6 +59,8 @@ export default function Subscriptions() {
       console.error("Error filtering users:", error);
     } finally {
       setLoadingFilter(false);
+      setLoadingPage(false);
+
     }
   };
 
@@ -76,6 +78,7 @@ export default function Subscriptions() {
       console.error("Error fetching subscriptions:", error);
     } finally {
       setLoadingPage(false);
+
     }
   };
 
@@ -158,6 +161,8 @@ export default function Subscriptions() {
     } catch (error) {
       console.error("حدث خطأ أثناء تمديد الاشتراك:", error);
       Swal.fire("خطأ!", "فشل تمديد الاشتراك. تأكد من أنك تملك الصلاحيات اللازمة.", "error");
+    } finally {
+      setLoadingPage(false);
     }
   }
   });
@@ -184,6 +189,8 @@ export default function Subscriptions() {
         } catch (error) {
           console.log(error);
           Swal.fire("خطأ!", "فشل حذف العنصر. تأكد من أنك تملك الصلاحيات اللازمة.", "error");
+        } finally {
+          setLoadingPage(false);
         }
 
       } 
@@ -194,33 +201,43 @@ export default function Subscriptions() {
 
 
 
-  const handlePause = async (id) => {
+  const handleToggleStatus = async (id, isActive) => {
+    const actionText = isActive ? "إيقاف" : "تشغيل";
+    const newStatus = !isActive; // عكس الحالة الحالية
+  
     Swal.fire({
-      title: 'هل أنت متأكد؟',
-      text: 'هل تريد إيقاف هذا الاشتراك؟',
-      icon: 'warning',
+      title: `هل أنت متأكد؟`,
+      text: `هل تريد ${actionText} هذا الاشتراك؟`,
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'نعم، قم بالإيقاف!',
-      cancelButtonText: 'إلغاء'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: `نعم، قم بـ${actionText}!`,
+      cancelButtonText: "إلغاء",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axios.patch(`${import.meta.env.VITE_URL_BACKEND}/subscription/status/${id}`, {
-            isActive: false,
-      }, {
-        headers: { authorization: token },
-      });
-      console.log(response.data);
-      fetchData(currentPage);
-    } catch (error) {
-      console.log(error);
-      Swal.fire("خطأ!", "فشل إيقاف الاشتراك. تأكد من أنك تملك الصلاحيات اللازمة.", "error");
-    }
-  }
-  });
+          const response = await axios.patch(
+            `${import.meta.env.VITE_URL_BACKEND}/subscription/status/${id}`,
+            { isActive: newStatus },
+            { headers: { authorization: token } }
+          );
+          console.log(response.data);
+          fetchData(currentPage);
+        } catch (error) {
+          console.log(error);
+          Swal.fire(
+            "خطأ!",
+            `فشل ${actionText} الاشتراك. تأكد من أنك تملك الصلاحيات اللازمة.`,
+            "error"
+          );
+        } finally {
+          setLoadingPage(false);
+        }
+      }
+    });
   };
+  
 
   const handleTerminate = (id) => {
     Swal.fire({
@@ -243,7 +260,9 @@ export default function Subscriptions() {
         } catch (error) {
           console.log(error);
           Swal.fire("خطأ!", "فشل إنهاء العنصر. تأكد من أنك تملك الصلاحيات اللازمة.", "error");
-        }
+        } finally {
+          setLoadingPage(false);
+        } 
       }
     });
   };
@@ -376,8 +395,8 @@ export default function Subscriptions() {
                   <button onClick={() => handleDelete(subscription._id)} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-500">
                     حذف
                   </button>
-                  <button disabled={subscription.isActive === false} onClick={() => handlePause(subscription._id)} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500 disabled:opacity-50">
-                    إيقاف
+                  <button    onClick={() => handleToggleStatus(subscription._id, subscription.isActive)}className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-purple-500 ">
+                  {subscription.isActive ? "إيقاف" : "تشغيل"}
                   </button>
                   <button onClick={() => handleTerminate(subscription._id)} className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-700">
                     إنهاء الاشتراك
@@ -439,23 +458,7 @@ export default function Subscriptions() {
      
 
 
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
-          الصفحة السابقة
-        </button>
-        <span>الصفحة {currentPage} من {totalPages}</span>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
-          الصفحة التالية
-        </button>
-      </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
     </>
     )}
     </div>

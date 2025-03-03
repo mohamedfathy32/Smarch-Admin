@@ -6,7 +6,7 @@ import { Hourglass } from 'react-loader-spinner';
 import * as XLSX from "xlsx";
 import Swal from 'sweetalert2';
 import { FaEdit } from 'react-icons/fa';
-
+import Pagination from '../../../components/Pagination';
 export default function ReservationManagement() {
   const token = localStorage.getItem("tokenAdmin");
   const [owners, setOwners] = useState([]);
@@ -65,7 +65,7 @@ export default function ReservationManagement() {
     else{
       setButtonDisabled(false);
     }
-  }, [filters]); // مراقبة تغييرات filters
+  }, [filters,currentPage]); // مراقبة تغييرات filters
 
 
   const fetchData = async (page) => {
@@ -222,7 +222,7 @@ useEffect(() => {
               <tr key={owner._id} className="border-b">
                 {/* <td className="py-2 px-1 text-center text-lg">{index + 1}</td> */}
                 <td className="py-2 px-1 text-center text-lg"> {index + 1}</td>
-                <td className="py-2 px-1 text-center text-lg">{owner.userID.userName}</td>
+                <td className="py-2 px-1 text-center text-lg">{owner.userID.userName?owner.userID.userName:"لا يوجد اسم"}</td>
 
                 <td className="py-2 px-1 text-center text-lg">{owner.chaletID.name}</td>
                 <td className="py-2 px-1 text-center text-lg">{owner.chaletID.location.city}</td>
@@ -250,7 +250,7 @@ useEffect(() => {
         </table>
         ) : (
           <div className="text-center text-gray-500 text-lg py-4">
-            لا يوجد بيانات
+            لا يوجد حجوزات بعد
           </div>
         )}
         </div>
@@ -289,27 +289,11 @@ useEffect(() => {
   </div>
   ) : (
     <div className="text-center text-gray-500 text-lg py-4">
-      لا يوجد بيانات
+      لا يوجد حجوزات بعد
     </div>
   )}
 
-      <div className="flex justify-between mt-4">
-                <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                >
-                    الصفحة السابقة
-                </button>
-                <span>الصفحة {currentPage} من {totalPages}</span>
-                <button
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                >
-                    الصفحة التالية
-                </button>
-                </div>
+<Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
                 </>
                 )}
                 </div>
