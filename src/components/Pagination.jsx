@@ -1,10 +1,9 @@
-// eslint-disable-next-line react/prop-types
+/* eslint-disable react/prop-types */
 export default function Pagination({ currentPage, totalPages, setCurrentPage }) {
 
 
     return (
         <div className="flex justify-center my-4">
-            {console.log("totalPages: " + totalPages)}
             <div className="inline-flex items-center justify-center rounded-sm bg-blue-600 py-1 text-white">
                 <button className="inline-flex size-12 items-center justify-center rtl:rotate-180 disabled:opacity-50"
                     onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}

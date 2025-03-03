@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { Hourglass } from 'react-loader-spinner';
 import Swal from 'sweetalert2';
 import * as XLSX from "xlsx";
+import Pagination from '../../../components/Pagination';
 
 
 export default function ChaletOwner() {
@@ -67,6 +68,7 @@ export default function ChaletOwner() {
         });
       } finally {
         setLoading(false);
+        
       }
 
 
@@ -502,7 +504,7 @@ export default function ChaletOwner() {
     </table>
   ) : (
     <div className="text-center text-gray-500 text-lg py-4">
-      لا يوجد مالكون
+      لا يوجد مالكي شاليهات
     </div>
   )}
 </div>
@@ -550,23 +552,7 @@ export default function ChaletOwner() {
 
 
           
-          <div className="flex justify-between mt-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            >
-              الصفحة السابقة
-            </button>
-            <span>الصفحة {currentPage} من {totalPages}</span>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-            >
-              الصفحة التالية
-            </button>
-          </div>
+<Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
 
           {isModalOpen && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">

@@ -53,6 +53,8 @@ export default function ControlsPage() {
         getChalets(),
         getSubscriptions(),
         fetchData(),
+       
+        
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -132,6 +134,7 @@ export default function ControlsPage() {
     },
   };
   const getSubscriptions = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/subscription`, {
         headers: { authorization: token },
@@ -140,15 +143,19 @@ export default function ControlsPage() {
       setTotalRevenue(response.data.totalRevenue);
       console.log(response.data.totalRevenue);
       console.log(response.data);
-
+      setLoading(false);
 
     } catch (error) {
       console.error("Error fetching subscriptions:", error);
+    } finally {
+      setLoading(false);
     }
+    
   }
 
 
   const getAllUsers = async () => {
+    setLoading(true);
     try {
 
       const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/user`, {
@@ -161,6 +168,7 @@ export default function ControlsPage() {
       setActiveUsers(activeCount);
       const inactiveCount = response.data.data.filter(user => !user.active).length;
       setInactiveUsers(inactiveCount);
+      setLoading(false);
 
 
 
@@ -168,11 +176,14 @@ export default function ControlsPage() {
 
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_URL_BACKEND}/reservation?page=${currentPage}&limit=${itemsPerPage}`,
@@ -187,13 +198,17 @@ export default function ControlsPage() {
       console.log(response.data);
       // console.log(response.data.pagination.totalItems);
       setReservCount(response.data.pagination.totalItems)
+      setLoading(false);
 
     } catch (error) {
       console.error("Error fetching reservations:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const getChalets = async () => {
+    setLoading(true);
     try {
       let allChalets = [];
       let currentPage = 1;
@@ -213,6 +228,7 @@ export default function ControlsPage() {
         if (currentPage === 1) {
           setChaletsCount(response.data.pagination.totalItems);
           totalPages = response.data.pagination.totalPages;
+          setLoading(false);
         }
 
         currentPage++; // الانتقال إلى الصفحة التالية
@@ -220,10 +236,14 @@ export default function ControlsPage() {
 
       setChalets(allChalets); // حفظ كل الشاليهات في state
       console.log("جميع الشاليهات:", allChalets);
+      setLoading(false);
+
 
       calculateLocationPercentages(allChalets); // حساب النسب بناءً على جميع البيانات
     } catch (error) {
       console.error("حدث خطأ أثناء جلب الشاليهات:", error);
+    } finally {
+      setLoading(false);
     }
   };
   const calculateLocationPercentages = (chaletsList) => {
@@ -251,6 +271,7 @@ export default function ControlsPage() {
           locationCounts["Others"] = 1;
         }
       }
+
     });
 
     // تحويل الأعداد إلى نسب مئوية
@@ -262,6 +283,8 @@ export default function ControlsPage() {
     }));
 
     setLocationData(locationPercentages);
+
+    setLoading(false);
   };
 
   const getColorForCity = (city) => {
@@ -316,14 +339,14 @@ export default function ControlsPage() {
         <>
 
 
-     <RegisterAdmin/>
+    
 
           {/* // ✅ المبيعات */}
           <div className="flex flex-wrap gap-4 justify-evenly">
             <div className="flex justify-between items-center p-4 rounded-lg shadow w-full sm:w-[48%] md:w-[22%] h-[150px] flex-shrink-0 border border-[#1A71FF]">
               <div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-3"> الايرادات</h3>
-                <p className="text-2xl font-semibold text-[#101828]">{totalRevenue}</p>
+                <p className="text-2xl font-semibold text-[#101828]">  {totalRevenue}</p>
               </div>
 
               <svg xmlns="http://www.w3.org/2000/svg" width="60" height="61" viewBox="0 0 60 61" fill="none">
@@ -406,7 +429,8 @@ export default function ControlsPage() {
   {/* ✅ مخطط الدائرة (Pie Chart) */}
   
   <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4 ">
-   
+    <p className="text-gray-700 font-semibold text-lg text-center">مواقع الشاليهات</p>
+
     <PieChart
       series={[
         {
@@ -427,12 +451,18 @@ export default function ControlsPage() {
       }}
       {...sizing}
     />
-  </div>
+ 
+
+</div>
 
   {/* ✅ مخطط الدونات (Doughnut Chart) */}
   <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4">
+    
+  {activeUsers + inactiveUsers === 0 ? (
+    <p className="text-gray-700 font-semibold text-lg text-center">لا يوجد مستخدمون حتى الآن</p>
+  ) : (
     <Doughnut data={data} options={optionsUsers} />
-  </div>
+  )}  </div>
 </div>
 
 
@@ -446,22 +476,23 @@ export default function ControlsPage() {
           <div className="flex flex-col md:flex-row gap-4 p-6">
   {/* ✅ الرسم البياني */}
   <div className="w-full md:w-2/5 rounded-lg shadow bg-white p-4">
-    {chartData ? <Bar data={chartData} options={options} /> : <p>جاري تحميل البيانات...</p>}
+    {chartData ? <Bar data={chartData} options={options} /> : <p className="text-gray-700 font-semibold text-lg text-center">لا توجد عملاء بعد</p>}
   </div>
 
   {/* ✅ الجدول */}
   <div className="w-full md:w-3/5 max-w-[700px] p-4 rounded-lg shadow bg-white overflow-x-auto">
     <p className="p-1 text-lg">اخر الحجوزات</p>
+    {reserv.length > 0 ? (
     <table className="w-full border-collapse">
       <thead>
         <tr className="text-[#0061E0] p-2 text-sm">
-          <th>رقم الحجز</th>
-          <th>اسم العميل</th>
-          <th>اسم الشالية</th>
-          <th>تاريخ الحجز</th>
-          <th>تاريخ المغادرة</th>
-          <th>مبلغ الحجز</th>
-          <th>حالة الحجز</th>
+          <th className="text-sm sm:text-sm px-2 py-1">رقم الحجز</th>
+          <th className="text-sm sm:text-sm px-2 py-1">اسم العميل</th>
+          <th className="text-sm sm:text-sm px-2 py-1">اسم الشالية</th>
+          <th className="text-sm sm:text-sm px-2 py-1">تاريخ الحجز</th>
+          <th className="text-sm sm:text-sm px-2 py-1">تاريخ المغادرة</th>
+          <th className="text-sm sm:text-sm px-2 py-1">مبلغ الحجز</th>
+          <th className="text-sm sm:text-sm px-2 py-1">حالة الحجز</th>
         </tr>
       </thead>
       <tbody>
@@ -483,7 +514,10 @@ export default function ControlsPage() {
         ))}
       </tbody>
     </table>
-  </div>
+  ) : (
+    <p className="text-gray-700 font-semibold text-lg text-center">لا توجد حجوزات بعد</p>
+  )}
+</div>
 </div>
 
 

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { Oval } from "react-loader-spinner";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { Hourglass } from 'react-loader-spinner';
+import Pagination from '../../../components/Pagination';
 export default function Articles() {
     const [articles, setArticles] = useState([]);
     const token = localStorage.getItem("tokenAdmin");
@@ -15,7 +16,8 @@ export default function Articles() {
     const [totalPages, setTotalPages] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedArticleId, setSelectedArticleId] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    
     // دالة رفع الصورة إلى Cloudinary
     const uploadImageToCloudinary = async (file) => {
         const formData = new FormData();
@@ -27,11 +29,12 @@ export default function Articles() {
                 `https://api.cloudinary.com/v1_1/dwwaqxeyl/image/upload`,
                 formData
             );
-            console.log(response.data.secure_url)
             return response.data.secure_url;
         } catch (error) {
             console.error("خطأ أثناء رفع الصورة إلى Cloudinary", error);
             return null;
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -53,7 +56,7 @@ export default function Articles() {
                 image: values.image,
             };
             try {
-                const res = await axios.post(
+                await axios.post(
                     `${import.meta.env.VITE_URL_BACKEND}/article`,
                     articleData,
                     {
@@ -64,20 +67,20 @@ export default function Articles() {
                     }
                 );
                 Swal.fire({
-                    title: "ناجح",
-                    text: res.data.message,
+                    title: "تم حفظ المقال بنجاح",
                     icon: "success",
                     confirmButtonText: "موافق",
                 });
                 fetchArticles(currentPage);
                 resetForm();
             } catch (error) {
-                console.log(error);
                 Swal.fire({
                     title: error.response.data.message,
                     icon: "error",
                     confirmButtonText: "موافق",
                 });
+                } finally {
+                setLoading(false);
             }
         },
         validate: (values) => {
@@ -150,6 +153,8 @@ export default function Articles() {
                     icon: "error",
                     confirmButtonText: "موافق",
                 });
+            } finally {
+                setLoading(false);
             }
         },
         validate: (values) => {
@@ -206,7 +211,7 @@ export default function Articles() {
     };
 
     const fetchArticles = async (page) => {
-        setLoading(true);
+        // setLoading(true);
         try {
             const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/article`, {
                 headers: { Authorization: token },
@@ -214,13 +219,18 @@ export default function Articles() {
             });
             setArticles(response.data.data);
             setTotalPages(response.data.pagination.totalPages);
+         
             setLoading(false);
+           
         } catch (error) {
             console.error("❌ خطأ أثناء تحميل المقالات", error);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
+        
         fetchArticles(currentPage);
     }, [currentPage]);
 
@@ -248,6 +258,8 @@ export default function Articles() {
                         icon: "error",
                         confirmButtonText: "موافق",
                     });
+                } finally {
+                    setLoading(false);
                 }
             }
         });
@@ -399,66 +411,48 @@ export default function Articles() {
 
                     {/* عرض قائمة المقالات */}
                     {articles.length > 0 ? (
-                        <div className="max-w-5xl mx-auto mt-10">
-                            <h2 className="text-3xl font-bold mb-6 text-center">📜 قائمة المقالات</h2>
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {articles.map((article) => (
-                                    <div
-                                        key={article._id}
-                                        className="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition-all"
-                                    >
-                                        <img
-                                            src={article.image}
-                                            alt={article.title}
-                                            className="w-full h-40 object-cover rounded-lg"
-                                        />
-                                        <h3 className="text-xl font-semibold mt-3">{article.title}</h3>
-                                        <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-                                            {article.subTitel}
-                                        </p>
-                                        <div className="flex justify-between mt-4">
-                                            <button
-                                                className="text-blue-500 hover:text-blue-700 flex items-center gap-1"
-                                                onClick={() => handleEdit(article._id)}
-                                            >
-                                                <AiOutlineEdit size={22} /> تعديل
-                                            </button>
-                                            <button
-                                                className="text-red-500 hover:text-red-700 flex items-center gap-1"
-                                                onClick={() => handleDelete(article._id)}
-                                            >
-                                                <AiOutlineDelete size={22} /> حذف
-                                            </button>
-                                        </div>
+                    <div className="max-w-5xl mx-auto mt-10">
+                        <h2 className="text-3xl font-bold mb-6 text-center">📜 قائمة المقالات</h2>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {articles.map((article) => (
+                                <div
+                                    key={article._id}
+                                    className="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition-all"
+                                >
+                                    <img
+                                        src={article.image}
+                                        alt={article.title}
+                                        className="w-full h-40 object-cover rounded-lg"
+                                    />
+                                    <h3 className="text-xl font-semibold mt-3 ">{article.title}</h3>
+                                    <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+                                        {article.subTitel}
+                                    </p>
+                                    <div className="flex justify-between mt-4">
+                                        <button
+                                            className="text-blue-500 hover:text-blue-700 flex items-center gap-1"
+                                            onClick={() => handleEdit(article._id)}
+                                        >
+                                            <AiOutlineEdit size={22} /> تعديل
+                                        </button>
+                                        <button
+                                            className="text-red-500 hover:text-red-700 flex items-center gap-1"
+                                            onClick={() => handleDelete(article._id)}
+                                        >
+                                            <AiOutlineDelete size={22} /> حذف
+                                        </button>
                                     </div>
-                                ))}
-                            </div>
-                            <div className="flex justify-between mt-4">
-                                <button
-                                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                                    disabled={currentPage === 1}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                                >
-                                    الصفحة السابقة
-                                </button>
-                                <span>
-                                    الصفحة {currentPage} من {totalPages}
-                                </span>
-                                <button
-                                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                                    disabled={currentPage === totalPages}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                                >
-                                    الصفحة التالية
-                                </button>
-                            </div>
+                                </div>
+                            ))}
                         </div>
+                        
+                    </div>
                     ) : (
                         <div className="text-center text-gray-500 text-lg py-4">
                             لا يوجد مقالات بعد
                         </div>
                     )}
-
+<Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
                     {/* مودال التعديل باستخدام editFormik */}
                     {isModalOpen && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -567,6 +561,7 @@ export default function Articles() {
                                 </form>
                             </div>
                         </div>
+                        
                     )}
                 </>
             )}
