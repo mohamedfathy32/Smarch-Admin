@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Bar, Doughnut } from "react-chartjs-2";
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import { LineChart } from '@mui/x-charts/LineChart';
@@ -53,8 +53,8 @@ export default function ControlsPage() {
         getChalets(),
         getSubscriptions(),
         fetchData(),
-       
-        
+
+
       ]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -111,7 +111,7 @@ export default function ControlsPage() {
     return {
       responsive: true,
       maintainAspectRatio: false,
-      
+
       labels: Object.keys(monthlyData),
       datasets: [
         {
@@ -150,7 +150,7 @@ export default function ControlsPage() {
     } finally {
       setLoading(false);
     }
-    
+
   }
 
 
@@ -303,7 +303,7 @@ export default function ControlsPage() {
     margin: { right: -50 },
     width: 300,
     height: 300,
-   
+
     legend: { hidden: true },
   };
 
@@ -339,9 +339,10 @@ export default function ControlsPage() {
         <>
 
 
-    
+
 
           {/* // ✅ المبيعات */}
+          <RegisterAdmin />
           <div className="flex flex-wrap gap-4 justify-evenly">
             <div className="flex justify-between items-center p-4 rounded-lg shadow w-full sm:w-[48%] md:w-[22%] h-[150px] flex-shrink-0 border border-[#1A71FF]">
               <div>
@@ -382,9 +383,9 @@ export default function ControlsPage() {
                 <p className="text-2xl font-semibold text-[#101828]">{chaletsCount}</p>
               </div>
               <svg xmlns="http://www.w3.org/2000/svg" width="60" height="61" viewBox="0 0 60 61" fill="none">
-                <path opacity="0.21" fill-rule="evenodd" clip-rule="evenodd" d="M0 30.9069V37.9069C0 50.6094 10.2975 60.9069 23 60.9069H30H37C49.7025 60.9069 60 50.6094 60 37.9069V30.9069V23.9069C60 11.2043 49.7025 0.90686 37 0.90686H30H23C10.2975 0.90686 0 11.2043 0 23.9069V30.9069Z" fill="#FEC53D" />
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M15 25.2233L27.9005 32.6714C28.0394 32.7516 28.1851 32.8095 28.3333 32.8463V47.2915L15.9201 39.9453C15.3498 39.6078 15 38.9944 15 38.3317V25.2233ZM45 25.0253V38.3317C45 38.9944 44.6502 39.6078 44.0799 39.9453L31.6667 47.2915V32.7197C31.6969 32.7046 31.7269 32.6885 31.7566 32.6714L45 25.0253Z" fill="#FEC53D" />
-                <path opacity="0.499209" fill-rule="evenodd" clip-rule="evenodd" d="M15.4053 21.6083C15.5628 21.4093 15.7617 21.2411 15.9936 21.1176L29.1186 14.127C29.6696 13.8335 30.3305 13.8335 30.8815 14.127L44.0065 21.1176C44.1852 21.2128 44.3444 21.3346 44.4801 21.4765L30.0899 29.7847C29.9953 29.8393 29.9081 29.9018 29.8286 29.9709C29.7491 29.9018 29.6618 29.8393 29.5672 29.7847L15.4053 21.6083Z" fill="#FEC53D" />
+                <path opacity="0.21" d="M0 30.9069V37.9069C0 50.6094 10.2975 60.9069 23 60.9069H30H37C49.7025 60.9069 60 50.6094 60 37.9069V30.9069V23.9069C60 11.2043 49.7025 0.90686 37 0.90686H30H23C10.2975 0.90686 0 11.2043 0 23.9069V30.9069Z" fill="#FEC53D" />
+                <path d="M15 25.2233L27.9005 32.6714C28.0394 32.7516 28.1851 32.8095 28.3333 32.8463V47.2915L15.9201 39.9453C15.3498 39.6078 15 38.9944 15 38.3317V25.2233ZM45 25.0253V38.3317C45 38.9944 44.6502 39.6078 44.0799 39.9453L31.6667 47.2915V32.7197C31.6969 32.7046 31.7269 32.6885 31.7566 32.6714L45 25.0253Z" fill="#FEC53D" />
+                <path opacity="0.499209" d="M15.4053 21.6083C15.5628 21.4093 15.7617 21.2411 15.9936 21.1176L29.1186 14.127C29.6696 13.8335 30.3305 13.8335 30.8815 14.127L44.0065 21.1176C44.1852 21.2128 44.3444 21.3346 44.4801 21.4765L30.0899 29.7847C29.9953 29.8393 29.9081 29.9018 29.8286 29.9709C29.7491 29.9018 29.6618 29.8393 29.5672 29.7847L15.4053 21.6083Z" fill="#FEC53D" />
               </svg>
             </div>
 
@@ -410,60 +411,60 @@ export default function ControlsPage() {
 
 
           <div className="flex flex-wrap gap-4 justify-around mt-4">
-  {/* ✅ الرسم البياني الخطي */}
-  <div className="w-full sm:w-[48%] md:w-[30%] flex-shrink-0 ">
-    <LineChart
-      xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-      series={[
-        {
-          data: [2, -5.5, 2, -7.5, 1.5, 6],
-          area: true,
-          baseline: 'min',
-        },
-      ]}
-      width={500}
-      height={300}
-    />
-  </div>
+            {/* ✅ الرسم البياني الخطي */}
+            <div className="w-full sm:w-[48%] md:w-[30%] flex-shrink-0 ">
+              <LineChart
+                xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+                series={[
+                  {
+                    data: [2, -5.5, 2, -7.5, 1.5, 6],
+                    area: true,
+                    baseline: 'min',
+                  },
+                ]}
+                width={500}
+                height={300}
+              />
+            </div>
 
-  {/* ✅ مخطط الدائرة (Pie Chart) */}
-  
-  <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4 ">
-    <p className="text-gray-700 font-semibold text-lg text-center">مواقع الشاليهات</p>
+            {/* ✅ مخطط الدائرة (Pie Chart) */}
 
-    <PieChart
-      series={[
-        {
-          outerRadius: 100,
-          data: locationData,
-          arcLabel: getArcLabel,
-          paddingAngle: 5,
-          cornerRadius: 10,
-          highlightScope: { highlighted: 'item', faded: 'global' },
-        },
-      ]}
-      sx={{
-        [`& .${pieArcLabelClasses.root}`]: {
-          fill: 'white',
-          fontSize: 14,
-          fontWeight: 'bold',
-        },
-      }}
-      {...sizing}
-    />
- 
+            <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4 ">
+              <p className="text-gray-700 font-semibold text-lg text-center">مواقع الشاليهات</p>
 
-</div>
+              <PieChart
+                series={[
+                  {
+                    outerRadius: 100,
+                    data: locationData,
+                    arcLabel: getArcLabel,
+                    paddingAngle: 5,
+                    cornerRadius: 10,
+                    highlightScope: { highlighted: 'item', faded: 'global' },
+                  },
+                ]}
+                sx={{
+                  [`& .${pieArcLabelClasses.root}`]: {
+                    fill: 'white',
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                  },
+                }}
+                {...sizing}
+              />
 
-  {/* ✅ مخطط الدونات (Doughnut Chart) */}
-  <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4">
-    
-  {activeUsers + inactiveUsers === 0 ? (
-    <p className="text-gray-700 font-semibold text-lg text-center">لا يوجد مستخدمون حتى الآن</p>
-  ) : (
-    <Doughnut data={data} options={optionsUsers} />
-  )}  </div>
-</div>
+
+            </div>
+
+            {/* ✅ مخطط الدونات (Doughnut Chart) */}
+            <div className="rounded-lg shadow w-full sm:w-[48%] md:w-[22%] flex-shrink-0 border border-[#1A71FF] p-4">
+
+              {activeUsers + inactiveUsers === 0 ? (
+                <p className="text-gray-700 font-semibold text-lg text-center">لا يوجد مستخدمون حتى الآن</p>
+              ) : (
+                <Doughnut data={data} options={optionsUsers} />
+              )}  </div>
+          </div>
 
 
 
@@ -474,51 +475,52 @@ export default function ControlsPage() {
 
           {/* ✅ المستخدمين */}
           <div className="flex flex-col md:flex-row gap-4 p-6">
-  {/* ✅ الرسم البياني */}
-  <div className="w-full md:w-2/5 rounded-lg shadow bg-white p-4">
-    {chartData ? <Bar data={chartData} options={options} /> : <p className="text-gray-700 font-semibold text-lg text-center">لا توجد عملاء بعد</p>}
-  </div>
+            {/* ✅ الرسم البياني */}
+            <div className="w-full md:w-2/5 rounded-lg shadow bg-white p-4">
+              {chartData ? <Bar data={chartData} options={options} /> : <p className="text-gray-700 font-semibold text-lg text-center">لا توجد عملاء بعد</p>}
+            </div>
 
-  {/* ✅ الجدول */}
-  <div className="w-full md:w-3/5 max-w-[700px] p-4 rounded-lg shadow bg-white overflow-x-auto">
-    <p className="p-1 text-lg">اخر الحجوزات</p>
-    {reserv.length > 0 ? (
-    <table className="w-full border-collapse">
-      <thead>
-        <tr className="text-[#0061E0] p-2 text-sm">
-          <th className="text-sm sm:text-sm px-2 py-1">رقم الحجز</th>
-          <th className="text-sm sm:text-sm px-2 py-1">اسم العميل</th>
-          <th className="text-sm sm:text-sm px-2 py-1">اسم الشالية</th>
-          <th className="text-sm sm:text-sm px-2 py-1">تاريخ الحجز</th>
-          <th className="text-sm sm:text-sm px-2 py-1">تاريخ المغادرة</th>
-          <th className="text-sm sm:text-sm px-2 py-1">مبلغ الحجز</th>
-          <th className="text-sm sm:text-sm px-2 py-1">حالة الحجز</th>
-        </tr>
-      </thead>
-      <tbody>
-        {reserv.map((reserv, index) => (
-          <tr key={reserv._id}>
-            <td className="py-2 px-2 text-center text-sm">{index + 1}</td>
-            <td className="py-2 px-2 text-center text-sm">{reserv.ownerID.userName}</td>
-            <td className="py-2 px-2 text-center text-sm">{reserv.chaletID.name}</td>
-            <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkInDate).toLocaleDateString("ar-EG")}</td>
-            <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkOutDate).toLocaleDateString("ar-EG")}</td>
-            <td className="py-2 px-2 text-center text-sm">{reserv.totalPrice}</td>
-            <td className={`py-2 px-2 text-center text-sm rounded-lg text-white
+            {/* ✅ الجدول */}
+            <div className="w-full md:w-3/5 max-w-[700px] p-4 rounded-lg shadow bg-white overflow-x-auto">
+              <p className="p-1 text-lg">اخر الحجوزات</p>
+              {reserv.length > 0 ? (
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="text-[#0061E0] p-2 text-sm">
+                      <th className="text-sm sm:text-sm px-2 py-1">رقم الحجز</th>
+                      <th className="text-sm sm:text-sm px-2 py-1">اسم العميل</th>
+                      <th className="text-sm sm:text-sm px-2 py-1">اسم الشالية</th>
+                      <th className="text-sm sm:text-sm px-2 py-1">تاريخ الحجز</th>
+                      <th className="text-sm sm:text-sm px-2 py-1">تاريخ المغادرة</th>
+                      <th className="text-sm sm:text-sm px-2 py-1">مبلغ الحجز</th>
+                      <th className="text-sm sm:text-sm px-2 py-1">حالة الحجز</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {console.log(reserv)}
+                    {reserv.map((reserv, index) => (
+                      <tr key={reserv._id}>
+                        <td className="py-2 px-2 text-center text-sm">{index + 1}</td>
+                        <td className="py-2 px-2 text-center text-sm">{reserv.userID.userName}</td>
+                        <td className="py-2 px-2 text-center text-sm">{reserv.chaletID.name}</td>
+                        <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkInDate).toLocaleDateString("ar-EG")}</td>
+                        <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkOutDate).toLocaleDateString("ar-EG")}</td>
+                        <td className="py-2 px-2 text-center text-sm">{reserv.totalPrice}</td>
+                        <td className={`py-2 px-2 text-center text-sm rounded-lg text-white
               ${reserv.status === "pending" ? "bg-yellow-500" :
-                reserv.status === "approved" ? "bg-green-500" :
-                  "bg-red-500"}`}>
-              {reserv.status}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ) : (
-    <p className="text-gray-700 font-semibold text-lg text-center">لا توجد حجوزات بعد</p>
-  )}
-</div>
-</div>
+                            reserv.status === "approved" ? "bg-green-500" :
+                              "bg-red-500"}`}>
+                          {reserv.status}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-gray-700 font-semibold text-lg text-center">لا توجد حجوزات بعد</p>
+              )}
+            </div>
+          </div>
 
 
         </>

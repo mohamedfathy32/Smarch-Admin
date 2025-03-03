@@ -7,20 +7,19 @@ export default function ProfilePage() {
 
   const token = localStorage.getItem("tokenAdmin");
 
-  
+
   const decodedToken = jwtDecode(token);
   console.log(decodedToken);
-  
+
 
   return (
-    <>
-                <span className="hidden md:block text-lg "><strong>{decodedToken.username}</strong></span>
-
-                      <Stack direction="row" spacing={2}>
-                            <Avatar>
-                              {decodedToken.username.charAt(0)}
-                            </Avatar>
-                        </Stack>
-    </>
+    <div className='flex items-center gap-2'>
+      <span className="hidden md:block text-lg font-semibold">{decodedToken.username}</span>
+      <Stack direction="row" spacing={2}>
+        <Avatar>
+          {decodedToken.username.charAt(0)}
+        </Avatar>
+      </Stack>
+    </div>
   );
 }

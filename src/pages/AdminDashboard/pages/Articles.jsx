@@ -8,7 +8,6 @@ import Swal from 'sweetalert2';
 import { Oval } from "react-loader-spinner";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { Hourglass } from 'react-loader-spinner';
-import Pagination from '../../../components/Pagination';
 export default function Articles() {
     const [articles, setArticles] = useState([]);
     const token = localStorage.getItem("tokenAdmin");
@@ -16,8 +15,7 @@ export default function Articles() {
     const [totalPages, setTotalPages] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedArticleId, setSelectedArticleId] = useState(null);
-    const [loading, setLoading] = useState(true);
-    
+    const [loading, setLoading] = useState(false);
     // دالة رفع الصورة إلى Cloudinary
     const uploadImageToCloudinary = async (file) => {
         const formData = new FormData();
@@ -33,8 +31,6 @@ export default function Articles() {
         } catch (error) {
             console.error("خطأ أثناء رفع الصورة إلى Cloudinary", error);
             return null;
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -79,8 +75,6 @@ export default function Articles() {
                     icon: "error",
                     confirmButtonText: "موافق",
                 });
-                } finally {
-                setLoading(false);
             }
         },
         validate: (values) => {
@@ -153,8 +147,6 @@ export default function Articles() {
                     icon: "error",
                     confirmButtonText: "موافق",
                 });
-            } finally {
-                setLoading(false);
             }
         },
         validate: (values) => {
@@ -211,7 +203,7 @@ export default function Articles() {
     };
 
     const fetchArticles = async (page) => {
-        // setLoading(true);
+        setLoading(true);
         try {
             const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/article`, {
                 headers: { Authorization: token },
@@ -219,18 +211,13 @@ export default function Articles() {
             });
             setArticles(response.data.data);
             setTotalPages(response.data.pagination.totalPages);
-         
             setLoading(false);
-           
         } catch (error) {
             console.error("❌ خطأ أثناء تحميل المقالات", error);
-        } finally {
-            setLoading(false);
         }
     };
 
     useEffect(() => {
-        
         fetchArticles(currentPage);
     }, [currentPage]);
 
@@ -258,8 +245,6 @@ export default function Articles() {
                         icon: "error",
                         confirmButtonText: "موافق",
                     });
-                } finally {
-                    setLoading(false);
                 }
             }
         });
@@ -424,7 +409,7 @@ export default function Articles() {
                                         alt={article.title}
                                         className="w-full h-40 object-cover rounded-lg"
                                     />
-                                    <h3 className="text-xl font-semibold mt-3 ">{article.title}</h3>
+                                    <h3 className="text-xl font-semibold mt-3">{article.title}</h3>
                                     <p className="text-gray-600 text-sm mt-1 line-clamp-2">
                                         {article.subTitel}
                                     </p>
@@ -445,14 +430,32 @@ export default function Articles() {
                                 </div>
                             ))}
                         </div>
-                        
+                        <div className="flex justify-between mt-4">
+                            <button
+                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                            >
+                                الصفحة السابقة
+                            </button>
+                            <span>
+                                الصفحة {currentPage} من {totalPages}
+                            </span>
+                            <button
+                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                            >
+                                الصفحة التالية
+                            </button>
+                        </div>
                     </div>
                     ) : (
                         <div className="text-center text-gray-500 text-lg py-4">
                             لا يوجد مقالات بعد
                         </div>
                     )}
-<Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
+
                     {/* مودال التعديل باستخدام editFormik */}
                     {isModalOpen && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -561,7 +564,6 @@ export default function Articles() {
                                 </form>
                             </div>
                         </div>
-                        
                     )}
                 </>
             )}

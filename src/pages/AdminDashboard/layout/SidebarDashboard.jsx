@@ -152,7 +152,7 @@ export default function SidebarDashboard({ isOpen }) {
 
 
 
-            <div
+            {/* <div
                 className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isPartialMatch("Payments") ? "bg-[#0061E0] text-white py-2" : ""}`}
                 onClick={() => nav("Payments")}
             >
@@ -172,7 +172,7 @@ export default function SidebarDashboard({ isOpen }) {
                 </svg>
 
                 <h1> المدفوعات </h1>
-            </div>
+            </div> */}
 
 
 

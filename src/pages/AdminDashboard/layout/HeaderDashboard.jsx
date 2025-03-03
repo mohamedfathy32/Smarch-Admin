@@ -6,6 +6,7 @@ import SidebarDashboard from './SidebarDashboard';
 import { useNavigate } from 'react-router-dom';
 import { NotificationContext } from "../../../../Context/NotificationContext";
 import NotificationModal from './../pages/NotificationModal'; // Import the modal
+import ProfilePage from '../pages/ProfilePage';
 
 export default function HeaderDashboard() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,7 +65,7 @@ export default function HeaderDashboard() {
                 className="hidden md:block w-[50%] border rounded-lg border-blue-300 px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
                 <span className="hidden md:block">fathy</span>
                 <img
                     src="/assets/images/copy1.JPG"
@@ -72,7 +73,8 @@ export default function HeaderDashboard() {
                     className="rounded-full w-10 h-10 cursor-pointer"
                     onClick={() => nav('/Profile')}
                 />
-            </div>
+            </div> */}
+            <ProfilePage />
 
             {/* Sidebar */}
             {isMenuOpen && (
