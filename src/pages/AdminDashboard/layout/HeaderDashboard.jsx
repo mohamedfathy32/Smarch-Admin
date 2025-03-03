@@ -80,9 +80,9 @@ export default function HeaderDashboard() {
             {isMenuOpen && (
                 <div
                     className="fixed inset-0 bg-[#00000080] z-20 transition-opacity duration-300"
-                    onClick={toggleMenu}
+                    // onClick={toggleMenu}
                 >
-                    <SidebarDashboard isOpen={isMenuOpen} />
+                    <SidebarDashboard isOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
                 </div>
             )}
 

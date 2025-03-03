@@ -2,7 +2,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState } from "react";
 import { NotificationContext } from "../../../../Context/NotificationContext";
-export default function SidebarDashboard({ isOpen }) {
+export default function SidebarDashboard({ isOpen, setIsMenuOpen }) {
     const nav = useNavigate();
     const location = useLocation();
 
@@ -13,6 +13,7 @@ export default function SidebarDashboard({ isOpen }) {
     const isPartialMatch = (path) => location.pathname.includes(path);
 
     const toggleDropdown = () => {
+        console.log(isDropdownOpen)
         setDropdownOpen((prev) => !prev);
     };
     const handleLogout = () => {
@@ -23,12 +24,19 @@ export default function SidebarDashboard({ isOpen }) {
         nav("/");
     };
 
+
+    const navTo = (route) => {
+        isOpen ? setIsMenuOpen(false) : "";
+        nav(route)
+    }
+
+
     return (
         <aside className={`bg-blue-50 w-64 h-full p-4 md:flex flex-col justify-between ${isOpen ? "" : "hidden"}`}>
             <div className="mt-5 text-center">
                 <div
                     className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded ${isExactMatch("/dashboard") ? "bg-[#0061E0] text-white py-2" : ""}`}
-                    onClick={() => nav("/dashboard")}
+                    onClick={() => navTo("/dashboard")}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -74,19 +82,19 @@ export default function SidebarDashboard({ isOpen }) {
                             <div className="pl-8 space-y-2 pt-3">
                                 <div
                                     className={`text-lg cursor-pointer  border border-black ${isPartialMatch("ChaletOwner") ? "bg-[#0061E0] text-white" : ""}`}
-                                    onClick={() => nav("ChaletOwner")}
+                                    onClick={() => navTo("ChaletOwner")}
                                 >
                                     مالك الشاليه
                                 </div>
                                 <div
                                     className={`text-lg cursor-pointer  border border-black ${isPartialMatch("ReservationRequester") ? "bg-[#0061E0] text-white" : ""}`}
-                                    onClick={() => nav("ReservationRequester")}
+                                    onClick={() => navTo("ReservationRequester")}
                                 >
                                     طالب الحجز
                                 </div>
                                 <div
                                     className={`text-lg cursor-pointer  border border-black ${isPartialMatch("ReservationManagement") ? "bg-[#0061E0] text-white" : ""}`}
-                                    onClick={() => nav("ReservationManagement")}
+                                    onClick={() => navTo("ReservationManagement")}
                                 >
                                     ادارة الحجوزات
                                 </div>
@@ -98,7 +106,7 @@ export default function SidebarDashboard({ isOpen }) {
 
             <div
                 className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-4 ${isPartialMatch("Supscriptions") ? "bg-[#0061E0] text-white py-2" : ""}`}
-                onClick={() => nav("Supscriptions")}
+                onClick={() => navTo("Supscriptions")}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +130,7 @@ export default function SidebarDashboard({ isOpen }) {
 
             <div
                 className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isPartialMatch("PricingPlans") ? "bg-[#0061E0] text-white py-2" : ""}`}
-                onClick={() => nav("PricingPlans")}
+                onClick={() => navTo("PricingPlans")}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +187,7 @@ export default function SidebarDashboard({ isOpen }) {
 
             <div
                 className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isPartialMatch("Notification") ? "bg-[#0061E0] text-white py-2" : ""}`}
-                onClick={() => nav("Notification")}
+                onClick={() => navTo("Notification")}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -207,7 +215,7 @@ export default function SidebarDashboard({ isOpen }) {
 
             <div
                 className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isPartialMatch("Support") ? "bg-[#0061E0] text-white py-2" : ""}`}
-                onClick={() => nav("Support")}
+                onClick={() => navTo("Support")}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -235,7 +243,7 @@ export default function SidebarDashboard({ isOpen }) {
 
             <div
                 className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isPartialMatch("Articles") ? "bg-[#0061E0] text-white py-2" : ""}`}
-                onClick={() => nav("Articles")}
+                onClick={() => navTo("Articles")}
             >
                 <svg
                     viewBox="0 0 24 24"
