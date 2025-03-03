@@ -499,18 +499,20 @@ export default function ControlsPage() {
                   <tbody>
                     {console.log(reserv)}
                     {reserv.map((reserv, index) => (
-                      <tr key={reserv._id}>
+                      <tr key={reserv._id} >
                         <td className="py-2 px-2 text-center text-sm">{index + 1}</td>
-                        <td className="py-2 px-2 text-center text-sm">{reserv.userID.userName}</td>
+                        <td className="py-2 px-2 text-center text-sm">{reserv.userID?.userName}</td>
                         <td className="py-2 px-2 text-center text-sm">{reserv.chaletID.name}</td>
                         <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkInDate).toLocaleDateString("ar-EG")}</td>
                         <td className="py-2 px-2 text-center text-sm">{new Date(reserv.checkOutDate).toLocaleDateString("ar-EG")}</td>
                         <td className="py-2 px-2 text-center text-sm">{reserv.totalPrice}</td>
-                        <td className={`py-2 px-2 text-center text-sm rounded-lg text-white
-              ${reserv.status === "pending" ? "bg-yellow-500" :
+                        <td className={`text-center text-sm  text-white `}>
+                          <h1 className={`rounded-lg py-1 px-1 ${reserv.status === "pending" ? "bg-yellow-500" :
                             reserv.status === "approved" ? "bg-green-500" :
                               "bg-red-500"}`}>
-                          {reserv.status}
+
+                            {reserv.status}
+                          </h1>
                         </td>
                       </tr>
                     ))}
