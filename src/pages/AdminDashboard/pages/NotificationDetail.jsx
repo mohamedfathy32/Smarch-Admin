@@ -47,7 +47,7 @@ export default function NotificationDetail() {
         if (result.isConfirmed) {
             try {
                 const response = await axios.patch(
-                    `https://smarch-back-end-nine.vercel.app/chalet/status/${id}`,
+                    `${import.meta.env.VITE_URL_BACKEND}/chalet/status/${id}`,
                     { status },
                     { headers: { Authorization: token } }
                 );
@@ -88,7 +88,7 @@ export default function NotificationDetail() {
         if (result.isConfirmed) {
             try {
                 const response = await axios.patch(
-                    `https://smarch-back-end-nine.vercel.app/chalet/permissionUpdate/${id}`,
+                    `${import.meta.env.VITE_URL_BACKEND}/chalet/permissionUpdate/${id}`,
                     { status },
                     { headers: { Authorization: token } }
                 );
@@ -117,7 +117,7 @@ export default function NotificationDetail() {
 
 
             const response = await axios.get(
-                `https://smarch-back-end-nine.vercel.app/chalet/${id}`
+                `${import.meta.env.VITE_URL_BACKEND}/chalet/${id}`
             );
             const pendingChalet = response.data.data.pendingUpdates != null ? response.data.data.pendingUpdates : response.data.data
             response.data.data.pendingUpdates != null ? setForUpdate(true) : setForUpdate(false);

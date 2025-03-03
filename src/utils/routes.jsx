@@ -40,7 +40,6 @@ export const router = createBrowserRouter([
       { path: "Support", element: <SupportPage /> },
       { path: "Articles", element: <Articles /> },
       { path: "ChatAdmin/:id", element: <ChatAdmin /> },
-
       { path: "notification/:id", element: <NotificationDetail /> },
     ]
 

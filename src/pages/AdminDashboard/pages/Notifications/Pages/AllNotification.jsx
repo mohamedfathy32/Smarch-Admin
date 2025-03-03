@@ -35,7 +35,7 @@ export default function AllNotification() {
             notification={notif}
             formatDate={formatDate}
             toggleReadStatus={toggleReadStatus}
-            all={false}
+            // all={false}
           />
         </div>
       ))}

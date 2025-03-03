@@ -6,7 +6,7 @@ import Pagination from "../../../../../components/Pagination"
 
 export default function NewNotification() {
     const { notifications, currentPage, loading,
-        fetchNotifications, totalPages, setCurrentPage
+        fetchNotifications, totalPages, setCurrentPage, toggleReadStatus
     } = useContext(NotificationContext)
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function NewNotification() {
                     <NotificationTemp
                         notification={notif}
                         formatDate={formatDate}
-                        // toggleReadStatus={toggleReadStatus}
+                        toggleReadStatus={toggleReadStatus}
                         all={false}
                     />
                 </div>

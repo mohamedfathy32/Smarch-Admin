@@ -112,8 +112,8 @@ export const NotificationProvider = ({ children }) => {
     getReadNotifications();
 
     // Initialize Pusher
-    const pusher = new Pusher("e2d89305666fadb1029b", {
-      cluster: "us3",
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+      cluster: import.meta.env.VITE_PUSHER_CLUSTER,
     });
 
     const channel = pusher.subscribe("notification-admin");
@@ -149,8 +149,8 @@ export const NotificationProvider = ({ children }) => {
           },
         }
       );
-      fetchNotifications()
-      getNewNotifications(all)
+      getNewNotifications()
+      fetchNotifications(all)
       setCurrentPage(currentPage);
 
     } catch (error) {
@@ -171,7 +171,7 @@ export const NotificationProvider = ({ children }) => {
     <NotificationContext.Provider value={{
       notifications, setCurrentPage, totalPages, currentPage, loading, fetchNotifications,
       numOfNewNotification, toggleReadStatus, numOfReadNotification, readNotifications, newNotifications,
-      getReadNotifications, getNewNotifications, totalNewPagesModel, totalReadPagesModel 
+      getReadNotifications, getNewNotifications, totalNewPagesModel, totalReadPagesModel
     }}>
       {children}
     </NotificationContext.Provider>
