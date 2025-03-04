@@ -160,16 +160,16 @@ export default function SidebarDashboard({ isOpen, setIsMenuOpen }) {
 
 
 
-            {/* <div
-                className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isPartialMatch("Payments") ? "bg-[#0061E0] text-white py-2" : ""}`}
-                onClick={() => nav("Payments")}
+            <div
+                className={`mb-6 text-2xl flex items-center gap-2 cursor-pointer rounded mt-1 ${isPartialMatch("AddDetails") ? "bg-[#0061E0] text-white py-2" : ""}`}
+                onClick={() => nav("AddDetails")}
             >
-                <svg
+                {/* <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     width="1em"
                     height="1em"
-                    className={`text-[#0061E0] ${isPartialMatch("Payments") ? "text-white" : ""}`}
+                    className={`text-[#0061E0] ${isPartialMatch("AddDetails") ? "text-white" : ""}`}
 
 
                 >
@@ -177,10 +177,28 @@ export default function SidebarDashboard({ isOpen, setIsMenuOpen }) {
                         fill="currentColor"
                         d="M2 5v14h20V5zm5 12a3 3 0 0 0-3-3v-4a3 3 0 0 0 3-3h10a3 3 0 0 0 3 3v4a3 3 0 0 0-3 3zm5-8c1.1 0 2 1.3 2 3s-.9 3-2 3s-2-1.3-2-3s.9-3 2-3"
                     ></path>
-                </svg>
+                </svg> */}
+                <svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1em"
+  height="1em"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  className={`text-[#0061E0] ${isPartialMatch("AddDetails") ? "text-white" : ""}`}
+>
+  <rect x="3" y="4" width="18" height="16" rx="2" ry="2" stroke="currentColor" />
+  <line x1="8" y1="10" x2="16" y2="10" stroke="currentColor" />
+  <line x1="8" y1="14" x2="13" y2="14" stroke="currentColor" />
+  <path d="M19 14v6M16 17h6" stroke="currentColor" />
+</svg>
 
-                <h1> المدفوعات </h1>
-            </div> */}
+
+                <h1> اضافة بيانات </h1>
+            </div>
 
 
 
