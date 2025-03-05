@@ -19,8 +19,7 @@ export default function AddDetails() {
     try {
       const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/siteData`);
       setSiteData(response.data.data);
-      console.log(response.data.data);
-      console.log(response.data);
+
       setIsLoading(false);
 
     } catch (error) {

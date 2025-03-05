@@ -20,16 +20,7 @@ export default function NotificationDetail() {
     const toggleSection = (section) => {
         setOpenSection(openSection === section ? null : section);
     };
-    // const location = useLocation()
-    // const {notificationID}=location.state;
-    // console.log(notificationID);
-    // console.log(id);
-    // console.log(notifications);
-    // const notification = notifications.find((notif) => notif._id === id);
 
-    // if (!notification) {
-    //     return <div className="text-center text-red-500">الإشعار غير موجود</div>;
-    // }
 
 
     const handlePatch = async (status) => {
@@ -51,7 +42,6 @@ export default function NotificationDetail() {
                     { status },
                     { headers: { Authorization: token } }
                 );
-                console.log(response.data);
 
                 Swal.fire({
                     title: "ناجح",
@@ -94,7 +84,6 @@ export default function NotificationDetail() {
                     { status },
                     { headers: { Authorization: token } }
                 );
-                console.log(response.data);
                 getChalet();
                 Swal.fire({
                     title: "ناجح",
@@ -125,7 +114,6 @@ export default function NotificationDetail() {
             response.data.data.pendingUpdates != null ? setForUpdate(true) : setForUpdate(false);
 
             setChalet(pendingChalet);
-            console.log(response.data);
         } catch (error) {
             console.error("Error fetching chalet details:", error);
         } finally {

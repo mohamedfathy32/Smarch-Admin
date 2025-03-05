@@ -73,7 +73,6 @@ export default function ReservationManagement() {
         headers: { authorization: token },
         params: { page }
       });
-      console.log(response.data.data)
 
 
       setOwners(response.data.data);

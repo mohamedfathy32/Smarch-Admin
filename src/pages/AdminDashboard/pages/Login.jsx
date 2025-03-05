@@ -15,9 +15,7 @@ function Login() {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        // const id = decoded.id;
         const role = decoded.role;
-        console.log("role: " + role);
         if ( role == "admin") {
           navigate("/dashboard");
         }
@@ -39,7 +37,6 @@ function Login() {
     try {
       // إرسال البريد الإلكتروني وكلمة المرور إلى الخادم
       const response = await axios.post(`${import.meta.env.VITE_URL_BACKEND}/admin/login`, { email, password });
-      console.log(response);
       Swal.fire({
         title: "نجاح!",
         text: "تم تسجيل الدخول بنجاح",
@@ -51,7 +48,6 @@ function Login() {
         const admin = response.data;
 
 
-        console.log("تم تسجيل الدخول بنجاح:", admin);
 
         // حفظ حالة تسجيل الدخول في Local Storage
 

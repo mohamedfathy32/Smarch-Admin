@@ -141,8 +141,7 @@ export default function ControlsPage() {
         params: { page: 1 }
       });
       setTotalRevenue(response.data.totalRevenue);
-      console.log(response.data.totalRevenue);
-      console.log(response.data);
+
       setLoading(false);
 
     } catch (error) {
@@ -195,8 +194,7 @@ export default function ControlsPage() {
         }
       );
       setReserv(response.data.data);
-      console.log(response.data);
-      // console.log(response.data.pagination.totalItems);
+
       setReservCount(response.data.pagination.totalItems)
       setLoading(false);
 
@@ -235,7 +233,6 @@ export default function ControlsPage() {
       }
 
       setChalets(allChalets); // حفظ كل الشاليهات في state
-      console.log("جميع الشاليهات:", allChalets);
       setLoading(false);
 
 
@@ -497,7 +494,6 @@ export default function ControlsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {console.log(reserv)}
                     {reserv.map((reserv, index) => (
                       <tr key={reserv._id} >
                         <td className="py-2 px-2 text-center text-sm">{index + 1}</td>

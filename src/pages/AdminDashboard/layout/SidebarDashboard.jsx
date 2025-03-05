@@ -13,7 +13,6 @@ export default function SidebarDashboard({ isOpen, setIsMenuOpen }) {
     const isPartialMatch = (path) => location.pathname.includes(path);
 
     const toggleDropdown = () => {
-        console.log(isDropdownOpen)
         setDropdownOpen((prev) => !prev);
     };
     const handleLogout = () => {
