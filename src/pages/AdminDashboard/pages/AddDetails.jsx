@@ -207,22 +207,22 @@ export default function AddDetails() {
 
           <div className="flex flex-col items-center w-[22%] md:w-auto">
             <IoIosPeople className="mb-2 text-[#0061E0] text-3xl md:text-6xl" />
-            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.client}</h1>
+            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.client|0}</h1>
             <p className="mb-2 text-[#0061E0] text-sm md:text-3xl">عدد العملاء</p>
           </div>
           <div className="flex flex-col items-center w-[22%] md:w-auto">
             <MdOutlineHome className="mb-2 text-[#0061E0] text-3xl md:text-6xl" />
-            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.chalet}</h1>
+            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.chalet|0}</h1>
             <p className="mb-2 text-[#0061E0] text-sm md:text-3xl">عدد الشاليهات</p>
           </div>
           <div className="flex flex-col items-center w-[22%] md:w-auto">
             <SlCalender className="mb-2 text-[#0061E0] text-3xl md:text-6xl" />
-            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.rating}</h1>
+            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.rating|0}</h1>
             <p className="mb-2 text-[#0061E0] text-sm md:text-3xl">عدد التقيمات</p>
           </div>
           <div className="flex flex-col items-center w-[22%] md:w-auto">
             <TbStars className="mb-2 text-[#0061E0] text-3xl md:text-6xl" />
-            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.reservation}</h1>
+            <h1 className="mb-2 text-[#0D263B] text-lg md:text-3xl font-bold">+{siteData?.reservation|0}</h1>
             <p className="mb-2 text-[#0061E0] text-sm md:text-3xl">عدد الحجوزات</p>
           </div>
 
