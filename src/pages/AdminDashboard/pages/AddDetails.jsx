@@ -129,6 +129,7 @@ export default function AddDetails() {
               onChange={editFormik.handleChange}
               onBlur={editFormik.handleBlur}
               value={editFormik.values.client}
+              
 
             />
             {editFormik.errors.client && <p className="text-red-500 text-sm">{editFormik.errors.client}</p>}
