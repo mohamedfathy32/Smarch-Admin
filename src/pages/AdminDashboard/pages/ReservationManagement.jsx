@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Oval } from "react-loader-spinner";
 
 import { Hourglass } from 'react-loader-spinner';
 import * as XLSX from "xlsx";
 import Swal from 'sweetalert2';
-import { FaEdit } from 'react-icons/fa';
 import Pagination from '../../../components/Pagination';
 export default function ReservationManagement() {
   const token = localStorage.getItem("tokenAdmin");
