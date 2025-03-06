@@ -34,7 +34,6 @@ export default function PricePlans() {
                 headers: { Authorization: token },
             });
             const data = response.data.data;
-            console.log(data);
             setPlans(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Error fetching plans:", error.response?.data || error.message);
@@ -83,7 +82,6 @@ export default function PricePlans() {
                         headers: { Authorization: token },
                     }
                 );
-                // console.log(formData)
                 Swal.fire({
                     title: "نجاح ",
                     text: response.data.message,

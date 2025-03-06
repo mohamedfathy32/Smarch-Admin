@@ -41,7 +41,6 @@ export const NotificationProvider = ({ children }) => {
         }
       );
 
-      console.log("Fetched Notifications:", response.data);
       setNotifications(response.data.data);
       setTotalPages(response.data.pagination.totalPages)
 
@@ -120,7 +119,6 @@ export const NotificationProvider = ({ children }) => {
 
     // Listen for new notifications
     channel.bind("newNotification", (data) => {
-      console.log("New notification received:", data);
       setNotifications((prev) => [data, ...prev]);
       setnumOfNewNotification(prev => prev + 1)
 

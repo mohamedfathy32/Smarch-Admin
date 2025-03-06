@@ -59,7 +59,6 @@ export default function ChaletOwner() {
         fetchData(currentPage);
         resetForm();
       } catch (error) {
-        console.log(error.response.data.message);
         Swal.fire({
 
           title: error.response.data.message,
@@ -121,7 +120,6 @@ export default function ChaletOwner() {
         headers: { authorization: token },
         params: { page }
       });
-      console.log(response.data);
       setOwners(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
       setLoadingPage(false);
@@ -168,12 +166,11 @@ export default function ChaletOwner() {
   };
 
   const handleGoToOwnerDashboard = async (ownerId) => {
-    console.log(ownerId);
-    const newTab = window.open("https://fronts-end-smarch.vercel.app/", "_blank");
+    const newTab = window.open(import.meta.env.VITE_SMARCH_URL_WEB, "_blank");
 
     if (newTab) {
       setTimeout(() => {
-        newTab.postMessage({ id: ownerId, role: "owner" }, "https://fronts-end-smarch.vercel.app/");
+        newTab.postMessage({ id: ownerId, role: "owner" }, import.meta.env.VITE_SMARCH_URL_WEB);
       }, 1000);
     }
 
@@ -246,7 +243,6 @@ export default function ChaletOwner() {
           { id: selectedOwner._id, ...values },
           { headers: { authorization: token } }
         );
-        console.log("✅ تم التحديث بنجاح");
         setIsModalOpen(false);
         fetchData(currentPage);
       } catch (error) {

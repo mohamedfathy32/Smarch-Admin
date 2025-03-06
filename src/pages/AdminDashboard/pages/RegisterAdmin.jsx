@@ -26,7 +26,6 @@ const RegisterAdmin = () => {
                     Authorization: token
                 }
             });
-            console.log(response);
             Swal.fire({
                 title: "تم إضافة المدير",
                 icon: "success"

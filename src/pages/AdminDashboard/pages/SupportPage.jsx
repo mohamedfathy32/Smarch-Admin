@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 
 import axios from 'axios';
 
-import { GrView } from "react-icons/gr";
 import Swal from 'sweetalert2';
 import { Hourglass } from 'react-loader-spinner';
 import { FaRocketchat } from "react-icons/fa";
@@ -13,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 export default function SupportPage() {
 
   const token = localStorage.getItem("tokenAdmin");
-  // console.log(token);
   const [ticket, setTicket] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -34,7 +32,6 @@ export default function SupportPage() {
         headers: { authorization: token },
         params: { page }
       });
-      console.log(response.data);
       setTicket(response.data.data);
       setTotalPendingTickets(response.data.numOfTicketsPending)
       setTotalClosedTickets(response.data.numOfTicketsClosed)
@@ -72,7 +69,6 @@ export default function SupportPage() {
           const response = await axios.delete(`${import.meta.env.VITE_URL_BACKEND}/ticket/delete/${id}`, {
             headers: { authorization: token },
           });
-          console.log(response);
           fetchData(currentPage);
 
         } catch (error) {
@@ -118,7 +114,6 @@ export default function SupportPage() {
   const getTicketByChatId = (chatId , id , status) => {
     if (chatId) {
       navigate(`/dashboard/ChatAdmin/${chatId}`);
-      console.log(chatId);
     } else {
       if(status === "closed"){
         Swal.fire({
@@ -143,7 +138,6 @@ export default function SupportPage() {
               }
             
             );
-            console.log(response.data.chatID);
             Swal.fire({
               title: "تم إنشاء التذكرة",
               icon: "success",
@@ -163,7 +157,6 @@ export default function SupportPage() {
   };
   const updateStatus = async (ticketId, newStatus) => {
 
-    console.log("id", ticketId);
     try {
         await axios.patch(`${import.meta.env.VITE_URL_BACKEND}/ticket/updateStatus/${ticketId}`, { status: newStatus }, {
             headers: {
@@ -172,7 +165,7 @@ export default function SupportPage() {
         });
         fetchData(currentPage);
     } catch (err) {
-        setError(err.message);
+        console.log(err.message);
     }
 };
 const handleCloseConfirmation = (ticketId, currentStatus) => {

@@ -28,7 +28,6 @@ export default function AllNotification() {
 
   return (
     <>
-    {console.log(notifications)}
       {notifications?.map((notif, index) => (
         <div key={index} className="flex justify-center mt-7 px-4 sm:px-6 lg:px-8">
           <NotificationTemp

@@ -26,8 +26,7 @@ export default function NotificationTemp({ notification, formatDate, toggleReadS
     const handleMarkAsRead = async (e) => {
         e.stopPropagation();
         setLoading(true);
-        console.log(notification._id)
-        console.log(all)
+
         await toggleReadStatus(notification._id, all);
         setLoading(false);
     };

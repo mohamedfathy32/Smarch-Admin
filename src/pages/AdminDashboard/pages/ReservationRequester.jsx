@@ -42,7 +42,6 @@ export default function ReservationRequester() {
           role: "user",
         },
       });
-      console.log(response.data);
       setUsers(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
       if (response.data.data.length === 0) {
@@ -109,7 +108,6 @@ export default function ReservationRequester() {
 
 
   const handleGoToUserDashboard = async (userId) => {
-    console.log(userId);
     const newTab = window.open("https://fronts-end-smarch.vercel.app/", "_blank");
 
     if (newTab) {
@@ -262,7 +260,6 @@ export default function ReservationRequester() {
           { id: selectedUser._id, ...values },
           { headers: { authorization: token } }
         );
-        console.log("✅ تم التحديث بنجاح");
         setIsModalOpen(false);
         fetchData(currentPage);
       } catch (error) {
