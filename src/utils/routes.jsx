@@ -18,6 +18,8 @@ import AllNotification from "../pages/AdminDashboard/pages/Notifications/Pages/A
 import ReadNotification from "../pages/AdminDashboard/pages/Notifications/Pages/ReadNotification";
 import NewNotification from "../pages/AdminDashboard/pages/Notifications/Pages/NewNotification";
 import ChatAdmin from "../pages/AdminDashboard/pages/ChatAdmin";
+import AddDetails from "../pages/AdminDashboard/pages/AddDetails";
+import Test from "../components/test";
 export const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   {
@@ -39,8 +41,11 @@ export const router = createBrowserRouter([
       { path: "Supscriptions", element: <Supscriptions /> },
       { path: "Support", element: <SupportPage /> },
       { path: "Articles", element: <Articles /> },
+
       { path: "ChatAdmin/:id", element: <ChatAdmin /> },
       { path: "notification/:id", element: <NotificationDetail /> },
+      {path:'AddDetails' , element : <AddDetails />},
+      {path:'test' , element : <Test />},
     ]
 
   },

@@ -24,7 +24,6 @@ export default function ChatAdmin() {
             const response = await axios.get(`${import.meta.env.VITE_URL_BACKEND}/chat/${id}`, {
                 headers: { authorization: token },
             });
-            console.log(response.data);
             setTicket(response.data.data);
             setMessages(response.data.data.messages);
         } catch (error) {
@@ -93,7 +92,6 @@ export default function ChatAdmin() {
 
         channel.bind('newMessage', function (chat) {
             setMessages(chat);
-            console.log(chat);
 
         });
 

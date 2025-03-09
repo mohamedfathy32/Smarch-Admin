@@ -42,7 +42,6 @@ export default function Subscriptions() {
                     
         },
       });
-      console.log(response.data);
       setSubscriptions(response.data.data);
       setTotalPages(response.data.pagination.totalPages);
       if (response.data.data.length === 0) {
@@ -70,7 +69,6 @@ export default function Subscriptions() {
       headers: { authorization: token },
       params: { page },
     });
-    console.log(response.data.data);
     setSubscriptions(response.data.data);
     setTotalPages(response.data.pagination.totalPages);
     setLoadingPage(false);
@@ -156,7 +154,6 @@ export default function Subscriptions() {
         }
       );
       
-      console.log("تم تمديد الاشتراك بنجاح", response.data);
       fetchData(currentPage); // إعادة تحميل البيانات بعد التحديث
     } catch (error) {
       console.error("حدث خطأ أثناء تمديد الاشتراك:", error);
@@ -184,7 +181,6 @@ export default function Subscriptions() {
           const response = await axios.delete(`${import.meta.env.VITE_URL_BACKEND}/subscription/delete/${id}`,  {
             headers: { authorization: token },
           });
-          console.log(response.data);
           fetchData(currentPage);
         } catch (error) {
           console.log(error);
@@ -222,7 +218,6 @@ export default function Subscriptions() {
             { isActive: newStatus },
             { headers: { authorization: token } }
           );
-          console.log(response.data);
           fetchData(currentPage);
         } catch (error) {
           console.log(error);
@@ -255,7 +250,6 @@ export default function Subscriptions() {
           const response = await axios.patch(`${import.meta.env.VITE_URL_BACKEND}/subscription/end/${id}` , {}, {
             headers: { authorization: token },
           });
-          console.log(response.data);
           fetchData(currentPage);
         } catch (error) {
           console.log(error);

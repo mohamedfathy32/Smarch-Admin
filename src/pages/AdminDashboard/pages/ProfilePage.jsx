@@ -9,7 +9,6 @@ export default function ProfilePage() {
 
 
   const decodedToken = jwtDecode(token);
-  console.log(decodedToken);
 
 
   return (

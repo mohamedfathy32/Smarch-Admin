@@ -59,7 +59,6 @@ export default function ChaletOwner() {
         fetchData(currentPage);
         resetForm();
       } catch (error) {
-        console.log(error.response.data.message);
         Swal.fire({
 
           title: error.response.data.message,
@@ -121,8 +120,8 @@ export default function ChaletOwner() {
         headers: { authorization: token },
         params: { page }
       });
-      console.log(response.data);
       setOwners(response.data.data);
+      console.log(response.data.data)
       setTotalPages(response.data.pagination.totalPages);
       setLoadingPage(false);
     } catch (error) {
@@ -168,12 +167,11 @@ export default function ChaletOwner() {
   };
 
   const handleGoToOwnerDashboard = async (ownerId) => {
-    console.log(ownerId);
-    const newTab = window.open("https://fronts-end-smarch.vercel.app/", "_blank");
+    const newTab = window.open(import.meta.env.VITE_SMARCH_URL_WEB, "_blank");
 
     if (newTab) {
       setTimeout(() => {
-        newTab.postMessage({ id: ownerId, role: "owner" }, "https://fronts-end-smarch.vercel.app/");
+        newTab.postMessage({ id: ownerId, role: "owner" }, import.meta.env.VITE_SMARCH_URL_WEB);
       }, 1000);
     }
 
@@ -246,7 +244,6 @@ export default function ChaletOwner() {
           { id: selectedOwner._id, ...values },
           { headers: { authorization: token } }
         );
-        console.log("✅ تم التحديث بنجاح");
         setIsModalOpen(false);
         fetchData(currentPage);
       } catch (error) {
@@ -283,7 +280,6 @@ export default function ChaletOwner() {
       'البريد الإلكتروني': owner.email,
       'رقم الهاتف': owner.phoneNumber,
       'عدد الشاليهات': owner.numOfChalets,
-      'الايرادات الكلية': 600,
       'الحالة': owner.active ? 'نشط' : 'معطل'
     }));
 
@@ -467,7 +463,6 @@ export default function ChaletOwner() {
                       <th className="text-sm sm:text-lg px-2 py-1">البريد الالكتروني</th>
                       <th className="text-sm sm:text-lg px-2 py-1">رقم الهاتف</th>
                       <th className="text-sm sm:text-lg px-2 py-1">عدد الشاليهات</th>
-                      <th className="text-sm sm:text-lg px-2 py-1">الايرادات الكلية</th>
                       <th className="text-sm sm:text-lg px-2 py-1">الحالة</th>
                       <th className="text-sm sm:text-lg px-2 py-1">خيارات</th>
                     </tr>
@@ -479,7 +474,6 @@ export default function ChaletOwner() {
                         <td className="py-2 px-1 text-center text-sm sm:text-lg">{owner.email}</td>
                         <td className="py-2 px-1 text-center text-sm sm:text-lg">{owner.phoneNumber}</td>
                         <td className="py-2 px-1 text-center text-sm sm:text-lg">{owner.numOfChalets}</td>
-                        <td className="py-2 px-1 text-center text-sm sm:text-lg">600</td>
                         <td className="py-2 px-1 text-center text-sm sm:text-lg">
                           <span className={`border px-3 py-1 text-center rounded-md text-white ${owner.active ? "bg-green-500" : "bg-red-500"}`}>
                             {owner.active ? "نشط" : "معطل"}
