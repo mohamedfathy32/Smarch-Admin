@@ -19,6 +19,7 @@ import ReadNotification from "../pages/AdminDashboard/pages/Notifications/Pages/
 import NewNotification from "../pages/AdminDashboard/pages/Notifications/Pages/NewNotification";
 import ChatAdmin from "../pages/AdminDashboard/pages/ChatAdmin";
 import AddDetails from "../pages/AdminDashboard/pages/AddDetails";
+import Test from "../components/test";
 export const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   {
@@ -43,7 +44,8 @@ export const router = createBrowserRouter([
 
       { path: "ChatAdmin/:id", element: <ChatAdmin /> },
       { path: "notification/:id", element: <NotificationDetail /> },
-      {path:'AddDetails' , element : <AddDetails />}
+      {path:'AddDetails' , element : <AddDetails />},
+      {path:'test' , element : <Test />},
     ]
 
   },

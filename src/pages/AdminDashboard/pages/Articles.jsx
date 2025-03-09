@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { Oval } from "react-loader-spinner";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { Hourglass } from 'react-loader-spinner';
+import CustomEditor from "../../../components/CustomEditor";
 export default function Articles() {
     const [articles, setArticles] = useState([]);
     const token = localStorage.getItem("tokenAdmin");
@@ -16,8 +17,11 @@ export default function Articles() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedArticleId, setSelectedArticleId] = useState(null);
     const [loading, setLoading] = useState(false);
-    // دالة رفع الصورة إلى Cloudinary
-    const uploadImageToCloudinary = async (file) => {
+    const [loadingImg, setLoadingImg] = useState(false);
+    const [loadingImg2, setLoadingImg2] = useState(false);
+
+    const uploadImage = async (file) => {
+        setLoadingImg(true)
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "fekryAlqady");
@@ -31,6 +35,28 @@ export default function Articles() {
         } catch (error) {
             console.error("خطأ أثناء رفع الصورة إلى Cloudinary", error);
             return null;
+        } finally {
+            setLoadingImg(false)
+        }
+    };
+    const uploadImageToCloudinary = async (file) => {
+        setLoadingImg2(true)
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "fekryAlqady");
+        formData.append("cloud_name", "dwwaqxeyl");
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/dwwaqxeyl/image/upload`,
+                formData
+            );
+            console.log(response.data.secure_url)
+            return response.data.secure_url;
+        } catch (error) {
+            console.error("خطأ أثناء رفع الصورة إلى Cloudinary", error);
+            return null;
+        } finally {
+            setLoadingImg2(false)
         }
     };
 
@@ -51,6 +77,7 @@ export default function Articles() {
                 KeyPointes: values.KeyPointes,
                 image: values.image,
             };
+            console.log(articleData)
             try {
                 await axios.post(
                     `${import.meta.env.VITE_URL_BACKEND}/article`,
@@ -265,6 +292,8 @@ export default function Articles() {
         }
     };
 
+
+
     return (
         <div>
             {loading ? (
@@ -283,7 +312,7 @@ export default function Articles() {
                 <>
 
                     {/* نموذج إضافة المقال (Add Form) */}
-                    <div className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow-xl">
+                    <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-xl">
                         <h2 className="text-2xl font-bold mb-4">إضافة مقال جديد</h2>
                         <form onSubmit={addFormik.handleSubmit}>
                             <input
@@ -310,14 +339,21 @@ export default function Articles() {
                             {addFormik.touched.subTitel && addFormik.errors.subTitel && (
                                 <Alert severity="error">{addFormik.errors.subTitel}</Alert>
                             )}
-                            <textarea
+                            {/* <textarea
                                 name="content"
                                 placeholder="المحتوى"
                                 className="w-full px-4 py-2 border rounded-lg mb-3 h-32 focus:ring-2 focus:ring-blue-500"
                                 onChange={addFormik.handleChange}
                                 onBlur={addFormik.handleBlur}
                                 value={addFormik.values.content}
-                            />
+                            /> */}
+
+
+                            <CustomEditor onChange={(html) => addFormik.setFieldValue("content", html)} placeholder="المحتوى ... " />
+
+
+
+
                             {addFormik.touched.content && addFormik.errors.content && (
                                 <Alert severity="error">{addFormik.errors.content}</Alert>
                             )}
@@ -328,11 +364,13 @@ export default function Articles() {
                                 onChange={async (event) => {
                                     const file = event.target.files[0];
                                     if (file) {
-                                        const imageUrl = await uploadImageToCloudinary(file);
+                                        const imageUrl = await uploadImage(file);
                                         addFormik.setFieldValue("image", imageUrl);
                                     }
                                 }}
                             />
+                            {loadingImg && <h1 className="text-blue-600 mb-2">جاري رفع صورة المقال الاساسيه ...</h1>}
+
                             {addFormik.touched.image && addFormik.errors.image && (
                                 <Alert severity="error">{addFormik.errors.image}</Alert>
                             )}
@@ -364,8 +402,11 @@ export default function Articles() {
                                 {addFormik.touched.KeyPointes && addFormik.errors.KeyPointes && (
                                     <Alert severity="error">{addFormik.errors.KeyPointes}</Alert>
                                 )}
+                                {loadingImg2 && <h1 className="text-blue-600 my-2">جاري رفع صورة النقاط الأساسية برجاء الانتظار ... </h1>}
+
                                 <div className="flex justify-between">
                                     <button
+                                        disabled={loadingImg2}
                                         type="button"
                                         onClick={() => handleAddKeyPoint(addFormik)}
                                         className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -396,60 +437,60 @@ export default function Articles() {
 
                     {/* عرض قائمة المقالات */}
                     {articles.length > 0 ? (
-                    <div className="max-w-5xl mx-auto mt-10">
-                        <h2 className="text-3xl font-bold mb-6 text-center">📜 قائمة المقالات</h2>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {articles.map((article) => (
-                                <div
-                                    key={article._id}
-                                    className="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition-all"
-                                >
-                                    <img
-                                        src={article.image}
-                                        alt={article.title}
-                                        className="w-full h-40 object-cover rounded-lg"
-                                    />
-                                    <h3 className="text-xl font-semibold mt-3">{article.title}</h3>
-                                    <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-                                        {article.subTitel}
-                                    </p>
-                                    <div className="flex justify-between mt-4">
-                                        <button
-                                            className="text-blue-500 hover:text-blue-700 flex items-center gap-1"
-                                            onClick={() => handleEdit(article._id)}
-                                        >
-                                            <AiOutlineEdit size={22} /> تعديل
-                                        </button>
-                                        <button
-                                            className="text-red-500 hover:text-red-700 flex items-center gap-1"
-                                            onClick={() => handleDelete(article._id)}
-                                        >
-                                            <AiOutlineDelete size={22} /> حذف
-                                        </button>
+                        <div className="max-w-5xl mx-auto mt-10">
+                            <h2 className="text-3xl font-bold mb-6 text-center">📜 قائمة المقالات</h2>
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {articles.map((article) => (
+                                    <div
+                                        key={article._id}
+                                        className="bg-white shadow-lg rounded-xl p-4 hover:shadow-2xl transition-all"
+                                    >
+                                        <img
+                                            src={article.image}
+                                            alt={article.title}
+                                            className="w-full h-40 object-cover rounded-lg"
+                                        />
+                                        <h3 className="text-xl font-semibold mt-3">{article.title}</h3>
+                                        <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+                                            {article.subTitel}
+                                        </p>
+                                        <div className="flex justify-between mt-4">
+                                            <button
+                                                className="text-blue-500 hover:text-blue-700 flex items-center gap-1"
+                                                onClick={() => handleEdit(article._id)}
+                                            >
+                                                <AiOutlineEdit size={22} /> تعديل
+                                            </button>
+                                            <button
+                                                className="text-red-500 hover:text-red-700 flex items-center gap-1"
+                                                onClick={() => handleDelete(article._id)}
+                                            >
+                                                <AiOutlineDelete size={22} /> حذف
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
+                            <div className="flex justify-between mt-4">
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                                >
+                                    الصفحة السابقة
+                                </button>
+                                <span>
+                                    الصفحة {currentPage} من {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                                >
+                                    الصفحة التالية
+                                </button>
+                            </div>
                         </div>
-                        <div className="flex justify-between mt-4">
-                            <button
-                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                                disabled={currentPage === 1}
-                                className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                            >
-                                الصفحة السابقة
-                            </button>
-                            <span>
-                                الصفحة {currentPage} من {totalPages}
-                            </span>
-                            <button
-                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                                disabled={currentPage === totalPages}
-                                className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-                            >
-                                الصفحة التالية
-                            </button>
-                        </div>
-                    </div>
                     ) : (
                         <div className="text-center text-gray-500 text-lg py-4">
                             لا يوجد مقالات بعد
