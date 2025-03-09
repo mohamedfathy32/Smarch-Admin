@@ -70,11 +70,19 @@ export default function Articles() {
             image: "",
         },
         onSubmit: async (values, { resetForm }) => {
+            // تصفية KeyPointes لإزالة الصور الفارغة
+            const filteredKeyPoints = values.KeyPointes.map(point => {
+                // إزالة images إذا كانت جميعها فارغة
+                const filteredImages = point.images.filter(img => img.trim() !== "");
+                return filteredImages.length > 0 ? { ...point, images: filteredImages } : { content: point.content };
+            });
+            console.log(filteredKeyPoints)
+            // إنشاء بيانات المقال بدون الصور الفارغة
             const articleData = {
                 title: values.title,
                 subTitel: values.subTitel,
                 content: values.content,
-                KeyPointes: values.KeyPointes,
+                KeyPointes: filteredKeyPoints, // استخدام البيانات المصفاة
                 image: values.image,
             };
             console.log(articleData)
