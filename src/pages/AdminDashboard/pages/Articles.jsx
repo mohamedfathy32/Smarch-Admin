@@ -9,6 +9,7 @@ import { Oval } from "react-loader-spinner";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { Hourglass } from 'react-loader-spinner';
 import CustomEditor from "../../../components/CustomEditor";
+import Test from "../../../components/Test";
 export default function Articles() {
     const [articles, setArticles] = useState([]);
     const token = localStorage.getItem("tokenAdmin");
@@ -355,9 +356,13 @@ export default function Articles() {
                                 onBlur={addFormik.handleBlur}
                                 value={addFormik.values.content}
                             /> */}
+                            <Test
+                                value={addFormik.values.content}
+                                onChange={(value) => addFormik.setFieldValue("content", value)}
+                            />
 
 
-                            <CustomEditor onChange={(html) => addFormik.setFieldValue("content", html)} placeholder="المحتوى ... " />
+                            {/* <CustomEditor onChange={(html) => addFormik.setFieldValue("content", html)} placeholder="المحتوى ... " /> */}
 
 
 

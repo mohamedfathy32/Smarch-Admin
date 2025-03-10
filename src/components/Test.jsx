@@ -1,47 +1,52 @@
-import { useState } from "react";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { stateToHTML } from "draft-js-export-html";
+/* eslint-disable react/prop-types */
+import { useRef } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
+export default function Test({ value, onChange }) {
+    const quillRef = useRef(null);
 
-export default function Test() {
-    const [editorState, setEditorState] = useState();
-    const [htmlContent, setHtmlContent] = useState(""); // لحفظ كود HTML
+    function addImageByURL() {
+        const url = prompt("أدخل رابط الصورة:");
+        if (url) {
+            const editor = quillRef.current.getEditor();
+            const range = editor.getSelection();
+            editor.insertEmbed(range.index, "image", url);
+        }
+    }
 
-    const handleConvertToHtml = () => {
-        const contentState = editorState.getCurrentContent(); // الحصول على المحتوى
-        console.log(contentState)
-        const html = stateToHTML(contentState); // تحويله إلى HTML
-        setHtmlContent(html); // حفظه في الحالة
-        console.log("HTML Content:", html); // طباعته في الكونسول
+    const modules = {
+        toolbar: {
+            container: [
+                [{ font: [] }, { size: [] }],
+                ["bold", "italic", "underline", "strike"],
+                [{ header: 1 }, { header: 2 }, { header: 3 }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                [{ align: [] }],
+                ["blockquote", "code-block"],
+                ["link", "image", "video"],
+                ["clean"],
+            ],
+        },
     };
 
     return (
-        <>
-            <div style={{ border: "1px solid #ddd", padding: 10 }}>
-                <Editor
-                    editorState={editorState}
-                    onEditorStateChange={setEditorState}
-                    toolbar={{
-                        options: [
-                            "inline",
-                            "textAlign",
-                            "history",
-                        ],
-
-                    }}
-
-                />
-            </div>
-            <button onClick={handleConvertToHtml} style={{ marginTop: 10 }}>
-                تحويل إلى HTML
+        <div>
+            <button
+                onClick={addImageByURL}
+                className="mb-2 px-4 py-2 bg-blue-500 text-white font-bold rounded-md transition duration-300 hover:bg-blue-700"
+            >
+                🖼️ إضافة صورة في المحتوى
             </button>
 
-            {/* عرض الـ HTML بشكل منفذ */}
-            <div
-                style={{ marginTop: 20, padding: 10, border: "1px solid #ddd", background: "#fafafa" }}
-                dangerouslySetInnerHTML={{ __html: htmlContent }}
+            <ReactQuill
+                ref={quillRef}
+                value={value}
+                onChange={onChange}
+                modules={modules}
+                theme="snow"
+                placeholder="اكتب هنا..."
             />
-        </>
+        </div>
     );
-};
+}

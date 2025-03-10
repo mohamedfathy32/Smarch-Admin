@@ -2,7 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* .ql-editor,
-.ql-blank {
+
+.ql-editor,
+.ql-blank,
+.ql-editor  {
   min-height: 150px;
-} */
+  text-align: right !important;
+  font-size: large;
+}
+.ql-snow .ql-editor img {
+  max-width: 200px !important;
+}
+
+.ql-container { min-height: 200px; }
+.ql-editor { min-height: 150px; }

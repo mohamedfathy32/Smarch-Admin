@@ -1,0 +1,25 @@
+.wrapper-class {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.toolbar-class {
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+}
+
+.editor-class {
+    min-height: 200px;
+    padding: 10px;
+}
+
+.rdw-dropdown-wrapper {
+    z-index: 9999 !important;
+}
+
+.rdw-fontsize-dropdown, 
+.rdw-fontfamily-dropdown, 
+.rdw-block-dropdown {
+    z-index: 9999 !important;
+    position: relative !important;
+}
